@@ -375,7 +375,7 @@ body { font-family: 'Segoe UI', Tahoma, sans-serif; background:#f0f4ff; color:va
 input[type=checkbox] { width:16px; height:16px; }
 .divider { border:none; border-top:1px solid var(--gray-200); margin:16px 0; }
 .live-broadcast-box { background:var(--gray-900); border-radius:var(--radius); padding:20px; margin-bottom:20px; }
-.live-broadcast-box video { width:100%; border-radius:var(--radius-sm); max-height:360px; transform:scaleX(-1); }
+.live-broadcast-box video { width:100%; border-radius:var(--radius-sm); max-height:360px; }
 .permissions-badge { background:var(--gold-pale); border:1px solid var(--gold); border-radius:var(--radius-sm); padding:6px 10px; font-size:12px; color:var(--gold); display:inline-block; margin:3px; }
 </style>
   <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.20.0.js"></script>
@@ -995,7 +995,7 @@ input[type=checkbox] { width:16px; height:16px; }
 
 <script>
 // ============ AGORA CONFIG ============
-const AGORA_APP_ID = '61ec0d1030d04ecfaa6ad5a5948a94d3'; // ← ضع App ID هنا من console.agora.io
+const AGORA_APP_ID = '638a3e9d9ffd40eba7788303a9684300'; // ← ضع App ID هنا من console.agora.io
 const AGORA_TOKEN  = null; // null للتطوير — في الإنتاج استخدم Token Server
 let agoraClient         = null;
 let agoraLocalAudioTrack = null;
@@ -1116,11 +1116,18 @@ function doAdminLogin() {
   launchApp();
 }
 
-function doLogout() {
-  if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
+async function doLogout() {
+  // Stop Agora tracks if hosting
+  try {
+    if (agoraLocalAudioTrack) { agoraLocalAudioTrack.stop(); agoraLocalAudioTrack.close(); agoraLocalAudioTrack = null; }
+    if (agoraLocalVideoTrack) { agoraLocalVideoTrack.stop(); agoraLocalVideoTrack.close(); agoraLocalVideoTrack = null; }
+    if (agoraClient) { await agoraClient.leave(); agoraClient = null; }
+  } catch(e) {}
   if (broadcastChannel) { broadcastChannel.close(); broadcastChannel = null; }
   clearInterval(livePollingInterval);
   currentUser = null;
+  isHosting = false;
+  currentLiveId = null;
   sessionStorage.removeItem('fm_session');
   showScreen('loginScreen');
 }
@@ -1938,7 +1945,7 @@ async function initBroadcast() {
     agoraLocalAudioTrack = tracks[0];
     agoraLocalVideoTrack = tracks[1];
     var previewDiv = document.getElementById('broadcastPreview');
-    previewDiv.style.transform = 'scaleX(-1)';
+    previewDiv.style.transform = '';
     agoraLocalVideoTrack.play(previewDiv);
     var box = document.getElementById('broadcastBox');
     box.dataset.title   = title;
