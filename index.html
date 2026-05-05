@@ -1,0 +1,2818 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full Mark Platform</title>
+<style>
+:root {
+  --navy: #0d2155;
+  --navy-light: #1a3a7a;
+  --gold: #b8882a;
+  --gold-light: #d4a843;
+  --gold-pale: #f5e6c0;
+  --white: #ffffff;
+  --gray-100: #f8f9fa;
+  --gray-200: #e9ecef;
+  --gray-300: #dee2e6;
+  --gray-500: #adb5bd;
+  --gray-700: #495057;
+  --gray-900: #212529;
+  --danger: #dc3545;
+  --success: #28a745;
+  --info: #17a2b8;
+  --shadow: 0 4px 20px rgba(13,33,85,0.15);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Segoe UI', Tahoma, sans-serif; background:#f0f4ff; color:var(--gray-900); min-height:100vh; }
+
+/* ===== SCREENS ===== */
+.screen { display:none !important; min-height:100vh; }
+.screen.active { display:flex !important; }
+
+/* ===== LOGIN ===== */
+#loginScreen {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 50%, #0a1a44 100%);
+  align-items:center; justify-content:center; padding:20px;
+}
+.login-box {
+  background:var(--white); border-radius:20px; padding:40px;
+  width:100%; max-width:440px; box-shadow:0 20px 60px rgba(0,0,0,0.4);
+}
+.logo-area { text-align:center; margin-bottom:30px; }
+.logo-circle {
+  width:80px; height:80px; background:linear-gradient(135deg,var(--navy),var(--navy-light));
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  margin:0 auto 12px; border:3px solid var(--gold);
+}
+.logo-circle span { color:var(--gold); font-weight:900; font-size:22px; }
+.logo-area h1 { color:var(--navy); font-size:24px; font-weight:800; }
+.logo-area p { color:var(--gold); font-size:13px; font-style:italic; }
+.form-group { margin-bottom:18px; }
+.form-group label { display:block; font-weight:600; margin-bottom:6px; color:var(--navy); font-size:14px; }
+.form-group input, .form-group select {
+  width:100%; padding:12px 16px; border:2px solid var(--gray-300);
+  border-radius:var(--radius-sm); font-size:15px; transition:.2s;
+  font-family:inherit;
+}
+.form-group input:focus, .form-group select:focus { outline:none; border-color:var(--navy); }
+.btn { padding:12px 24px; border:none; border-radius:var(--radius-sm); cursor:pointer; font-size:15px; font-weight:600; transition:.2s; font-family:inherit; }
+.btn-primary { background:var(--navy); color:var(--white); }
+.btn-primary:hover { background:var(--navy-light); }
+.btn-full { width:100%; display:block; }
+.btn-gold { background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:var(--white); }
+.btn-gold:hover { opacity:.9; }
+.btn-danger { background:var(--danger); color:var(--white); }
+.btn-success { background:var(--success); color:var(--white); }
+.btn-info { background:var(--info); color:var(--white); }
+.btn-outline { background:transparent; border:2px solid var(--navy); color:var(--navy); }
+.btn-sm { padding:7px 14px; font-size:13px; }
+.btn-xs { padding:4px 10px; font-size:12px; }
+.error-msg { color:var(--danger); font-size:13px; margin-top:8px; display:none; }
+.login-tabs { display:flex; margin-bottom:24px; border-radius:var(--radius-sm); overflow:hidden; border:2px solid var(--navy); }
+.login-tabs button { flex:1; padding:10px; background:transparent; border:none; cursor:pointer; font-weight:600; font-size:14px; transition:.2s; font-family:inherit; color:var(--navy); }
+.login-tabs button.active { background:var(--navy); color:var(--white); }
+
+/* ===== WHATSAPP STEP ===== */
+#waScreen {
+  background:linear-gradient(135deg,var(--navy),var(--navy-light));
+  align-items:center; justify-content:center; padding:20px;
+}
+.wa-box {
+  background:var(--white); border-radius:20px; padding:40px;
+  width:100%; max-width:420px; text-align:center;
+}
+.wa-icon { font-size:60px; margin-bottom:16px; }
+.wa-box h2 { color:var(--navy); margin-bottom:8px; }
+.wa-box p { color:var(--gray-700); margin-bottom:24px; font-size:14px; }
+
+/* ===== PROFILE SETUP ===== */
+#profileScreen {
+  background:linear-gradient(135deg,var(--navy),var(--navy-light));
+  align-items:center; justify-content:center; padding:20px;
+}
+.profile-box { background:var(--white); border-radius:20px; padding:40px; width:100%; max-width:480px; }
+.profile-box h2 { color:var(--navy); margin-bottom:24px; text-align:center; }
+.stage-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px; }
+.stage-card {
+  border:2px solid var(--gray-300); border-radius:var(--radius-sm); padding:12px;
+  text-align:center; cursor:pointer; transition:.2s;
+}
+.stage-card:hover { border-color:var(--navy); }
+.stage-card.selected { border-color:var(--gold); background:var(--gold-pale); }
+.stage-card .icon { font-size:24px; }
+.stage-card .label { font-size:12px; font-weight:600; margin-top:4px; }
+
+/* ===== MAIN APP ===== */
+#mainScreen { flex-direction:column; }
+.top-bar {
+  background:var(--navy); color:var(--white); padding:0 20px;
+  height:60px; display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:100; box-shadow:0 2px 10px rgba(0,0,0,0.3);
+}
+.top-bar .logo { display:flex; align-items:center; gap:10px; }
+.top-bar .logo span { font-weight:800; font-size:18px; }
+.top-bar .logo small { color:var(--gold); font-size:11px; }
+.top-bar-right { display:flex; align-items:center; gap:12px; }
+.user-avatar-small {
+  width:36px; height:36px; border-radius:50%; background:var(--gold);
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+  font-weight:700; font-size:14px; color:var(--navy); overflow:hidden;
+  border:2px solid var(--gold-light);
+}
+.user-avatar-small img { width:100%; height:100%; object-fit:cover; }
+.nav-bar {
+  background:var(--white); border-bottom:2px solid var(--gray-200);
+  display:flex; overflow-x:auto; gap:0; padding:0 10px;
+  position:sticky; top:60px; z-index:99;
+}
+.nav-btn {
+  padding:14px 18px; border:none; background:transparent; cursor:pointer;
+  font-weight:600; font-size:13px; color:var(--gray-700); border-bottom:3px solid transparent;
+  white-space:nowrap; transition:.2s; font-family:inherit; display:flex; align-items:center; gap:6px;
+}
+.nav-btn.active { color:var(--navy); border-bottom-color:var(--gold); }
+.nav-btn:hover { color:var(--navy); }
+.main-content { flex:1; padding:20px; max-width:1100px; margin:0 auto; width:100%; }
+
+/* ===== PAGES ===== */
+.page { display:none; }
+.page.active { display:block; }
+
+/* ===== HOME/FEED ===== */
+.feed-layout { display:grid; grid-template-columns:1fr 320px; gap:20px; }
+@media(max-width:768px) { .feed-layout { grid-template-columns:1fr; } }
+.stories-row { display:flex; gap:12px; overflow-x:auto; padding-bottom:8px; margin-bottom:20px; }
+.story-bubble {
+  flex-shrink:0; width:70px; cursor:pointer; text-align:center;
+}
+.story-ring {
+  width:64px; height:64px; border-radius:50%; padding:3px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-light));
+  margin:0 auto 6px;
+}
+.story-ring.add-story { background:var(--gray-300); }
+.story-ring-inner {
+  width:100%; height:100%; border-radius:50%; border:3px solid var(--white);
+  overflow:hidden; background:var(--navy); display:flex; align-items:center; justify-content:center;
+  font-size:22px;
+}
+.story-ring-inner img { width:100%; height:100%; object-fit:cover; }
+.story-bubble p { font-size:11px; color:var(--gray-700); text-overflow:ellipsis; overflow:hidden; white-space:nowrap; }
+
+/* Posts */
+.post-card {
+  background:var(--white); border-radius:var(--radius); margin-bottom:16px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.08); overflow:hidden;
+}
+.post-header { padding:14px 16px; display:flex; align-items:center; gap:12px; }
+.post-avatar {
+  width:42px; height:42px; border-radius:50%; background:var(--navy);
+  display:flex; align-items:center; justify-content:center; color:var(--gold);
+  font-weight:700; font-size:16px; overflow:hidden; flex-shrink:0;
+}
+.post-avatar img { width:100%; height:100%; object-fit:cover; }
+.post-meta { flex:1; }
+.post-meta strong { display:block; font-size:14px; color:var(--navy); }
+.post-meta small { color:var(--gray-500); font-size:12px; }
+.post-text { padding:0 16px 12px; font-size:15px; line-height:1.6; }
+.post-img { width:100%; max-height:400px; object-fit:cover; display:block; }
+.post-video { width:100%; max-height:400px; display:block; }
+.post-actions { padding:8px 16px; border-top:1px solid var(--gray-200); display:flex; gap:8px; align-items:center; }
+.post-action-btn {
+  background:none; border:none; cursor:pointer; padding:8px 12px; border-radius:20px;
+  font-size:13px; color:var(--gray-700); display:flex; align-items:center; gap:6px; transition:.2s; font-family:inherit;
+}
+.post-action-btn:hover { background:var(--gray-100); color:var(--navy); }
+.post-action-btn.liked { color:var(--danger); }
+.post-comments { padding:0 16px 12px; }
+.comment-input-row { display:flex; gap:8px; margin-top:8px; }
+.comment-input-row input { flex:1; padding:8px 12px; border:1px solid var(--gray-300); border-radius:20px; font-size:13px; font-family:inherit; }
+.comment-item { background:var(--gray-100); border-radius:var(--radius-sm); padding:8px 12px; margin-bottom:6px; font-size:13px; }
+.comment-item strong { color:var(--navy); }
+.repost-note { background:var(--gold-pale); border-right:3px solid var(--gold); padding:8px 12px; font-size:12px; color:var(--gray-700); margin:0 16px 8px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; }
+
+/* Create Post */
+.create-post-box { background:var(--white); border-radius:var(--radius); padding:16px; margin-bottom:16px; box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+.create-post-input { display:flex; gap:12px; align-items:center; margin-bottom:12px; }
+.create-post-input textarea { flex:1; border:1px solid var(--gray-300); border-radius:var(--radius-sm); padding:10px 12px; resize:none; height:60px; font-family:inherit; font-size:14px; }
+.create-post-actions { display:flex; gap:8px; flex-wrap:wrap; }
+.upload-post-img { display:none; }
+
+/* Sidebar */
+.sidebar-card { background:var(--white); border-radius:var(--radius); padding:16px; margin-bottom:16px; box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+.sidebar-card h3 { font-size:15px; color:var(--navy); margin-bottom:12px; font-weight:700; }
+.online-user { display:flex; align-items:center; gap:10px; padding:6px 0; }
+.online-dot { width:8px; height:8px; border-radius:50%; background:var(--success); }
+.online-name { font-size:13px; }
+
+/* ===== CONTENT PAGE ===== */
+.stage-selector { display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
+.stage-btn { padding:10px 20px; border-radius:20px; border:2px solid var(--gray-300); background:var(--white); cursor:pointer; font-weight:600; font-size:14px; transition:.2s; font-family:inherit; }
+.stage-btn.active { background:var(--navy); color:var(--white); border-color:var(--navy); }
+.grade-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px; margin-bottom:20px; }
+.grade-card {
+  background:var(--white); border-radius:var(--radius); padding:20px; text-align:center;
+  cursor:pointer; transition:.2s; box-shadow:0 2px 8px rgba(0,0,0,0.08); border:2px solid transparent;
+}
+.grade-card:hover { border-color:var(--gold); transform:translateY(-2px); }
+.grade-card .icon { font-size:32px; margin-bottom:8px; }
+.grade-card h3 { font-size:14px; font-weight:700; color:var(--navy); }
+.subject-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; }
+.subject-card {
+  background:var(--white); border-radius:var(--radius); padding:20px;
+  cursor:pointer; transition:.2s; box-shadow:0 2px 8px rgba(0,0,0,0.08); border:2px solid transparent;
+  display:flex; align-items:center; gap:14px;
+}
+.subject-card:hover { border-color:var(--gold); }
+.subject-icon { font-size:28px; }
+.subject-name { font-size:15px; font-weight:700; color:var(--navy); }
+.locked-badge { font-size:11px; color:var(--danger); font-weight:600; }
+.unlocked-badge { font-size:11px; color:var(--success); font-weight:600; }
+.content-list { display:flex; flex-direction:column; gap:12px; }
+.content-item {
+  background:var(--white); border-radius:var(--radius); padding:16px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.08); display:flex; align-items:center; gap:14px;
+}
+.content-icon { font-size:28px; }
+.content-info { flex:1; }
+.content-info h4 { font-size:15px; font-weight:700; color:var(--navy); margin-bottom:4px; }
+.content-info p { font-size:13px; color:var(--gray-500); }
+.content-actions { display:flex; gap:8px; }
+.breadcrumb { display:flex; align-items:center; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+.breadcrumb span { font-size:13px; color:var(--gray-500); }
+.breadcrumb button { background:none; border:none; cursor:pointer; color:var(--navy); font-weight:600; font-size:13px; font-family:inherit; }
+.unlock-box { background:var(--gold-pale); border:2px dashed var(--gold); border-radius:var(--radius); padding:20px; text-align:center; margin-bottom:20px; }
+
+/* ===== CHAT ===== */
+.chat-container { display:flex; flex-direction:column; height:calc(100vh - 200px); }
+.chat-messages { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px; background:var(--white); border-radius:var(--radius); border:1px solid var(--gray-200); }
+.chat-input-row { display:flex; gap:10px; padding:12px; background:var(--white); border-radius:var(--radius); margin-top:10px; border:1px solid var(--gray-200); }
+.chat-input-row input { flex:1; border:1px solid var(--gray-300); border-radius:20px; padding:10px 16px; font-size:15px; font-family:inherit; }
+.msg-bubble { max-width:75%; padding:10px 14px; border-radius:16px; font-size:14px; line-height:1.5; position:relative; }
+.msg-bubble.mine { background:var(--navy); color:var(--white); align-self:flex-end; border-radius:16px 16px 4px 16px; }
+.msg-bubble.theirs { background:var(--gray-200); color:var(--gray-900); align-self:flex-start; border-radius:16px 16px 16px 4px; }
+.msg-name { font-size:11px; color:var(--gray-500); margin-bottom:4px; }
+.msg-time { font-size:10px; margin-top:4px; opacity:.7; text-align:left; }
+
+/* ===== LIVE ===== */
+.live-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; }
+.live-card { background:var(--white); border-radius:var(--radius); overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+.live-thumb { background:var(--navy); height:150px; display:flex; align-items:center; justify-content:center; position:relative; }
+.live-badge { position:absolute; top:10px; right:10px; background:var(--danger); color:var(--white); padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; }
+.live-info { padding:14px; }
+.live-info h4 { font-weight:700; color:var(--navy); margin-bottom:4px; }
+.live-info small { color:var(--gray-500); font-size:12px; }
+.live-viewer { background:var(--gray-900); border-radius:var(--radius); overflow:hidden; position:relative; }
+.live-viewer video { width:100%; max-height:400px; display:block; }
+.live-viewer-badge { position:absolute; top:10px; right:10px; background:var(--danger); color:var(--white); padding:4px 12px; border-radius:20px; font-size:12px; font-weight:700; animation:pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+.live-controls { padding:12px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+
+/* ===== ADMIN DASHBOARD ===== */
+.admin-tabs { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px; }
+.admin-tab { padding:10px 18px; border-radius:20px; border:2px solid var(--gray-300); background:var(--white); cursor:pointer; font-weight:600; font-size:13px; transition:.2s; font-family:inherit; }
+.admin-tab.active { background:var(--navy); color:var(--white); border-color:var(--navy); }
+.stats-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:16px; margin-bottom:24px; }
+.stat-card { background:var(--white); border-radius:var(--radius); padding:20px; text-align:center; box-shadow:var(--shadow); }
+.stat-num { font-size:32px; font-weight:900; color:var(--navy); }
+.stat-label { font-size:13px; color:var(--gray-500); margin-top:4px; }
+.admin-table { width:100%; border-collapse:collapse; font-size:13px; }
+.admin-table th { background:var(--navy); color:var(--white); padding:12px; text-align:right; }
+.admin-table td { padding:10px 12px; border-bottom:1px solid var(--gray-200); }
+.admin-table tr:hover td { background:var(--gray-100); }
+.badge { display:inline-block; padding:3px 8px; border-radius:10px; font-size:11px; font-weight:600; }
+.badge-success { background:#d4edda; color:#155724; }
+.badge-danger { background:#f8d7da; color:#721c24; }
+.badge-warning { background:#fff3cd; color:#856404; }
+.badge-info { background:#d1ecf1; color:#0c5460; }
+
+/* ===== MODALS ===== */
+.modal-overlay {
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5);
+  z-index:1000; align-items:center; justify-content:center; padding:20px;
+}
+.modal-overlay.open { display:flex; }
+.modal-box { background:var(--white); border-radius:16px; padding:28px; width:100%; max-width:520px; max-height:90vh; overflow-y:auto; }
+.modal-box h3 { color:var(--navy); margin-bottom:20px; font-size:18px; }
+.modal-footer { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; }
+.modal-footer .btn { width:auto; }
+
+/* ===== STORY VIEWER ===== */
+.story-viewer-overlay {
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9);
+  z-index:2000; align-items:center; justify-content:center;
+}
+.story-viewer-overlay.open { display:flex; }
+.story-viewer-inner { width:100%; max-width:400px; height:100vh; position:relative; display:flex; flex-direction:column; }
+.story-progress { display:flex; gap:4px; padding:16px; position:absolute; top:0; left:0; right:0; z-index:10; }
+.story-progress-bar { flex:1; height:3px; background:rgba(255,255,255,0.4); border-radius:2px; overflow:hidden; }
+.story-progress-bar.done { background:var(--white); }
+.story-progress-bar.active .story-progress-fill { height:100%; background:var(--white); animation:storyFill 5s linear forwards; }
+@keyframes storyFill { from{width:0} to{width:100%} }
+.story-content { flex:1; display:flex; align-items:center; justify-content:center; }
+.story-content img, .story-content video { max-width:100%; max-height:80vh; object-fit:contain; }
+.story-text-big { color:var(--white); font-size:24px; font-weight:700; text-align:center; padding:20px; }
+.story-close { position:absolute; top:16px; left:16px; background:rgba(255,255,255,0.2); border:none; color:var(--white); width:36px; height:36px; border-radius:50%; cursor:pointer; font-size:18px; z-index:11; }
+.story-user-info { position:absolute; top:50px; right:16px; display:flex; align-items:center; gap:8px; color:var(--white); z-index:11; }
+.story-user-info small { font-size:12px; opacity:.8; }
+
+/* ===== VIDEO PLAYER ===== */
+.video-modal { max-width:760px; }
+.video-modal video, .video-modal iframe { width:100%; border-radius:var(--radius-sm); }
+
+/* ===== PROFILE PAGE ===== */
+.profile-header { background:var(--white); border-radius:var(--radius); padding:24px; margin-bottom:16px; display:flex; gap:20px; align-items:center; box-shadow:var(--shadow); }
+.profile-avatar-big { width:90px; height:90px; border-radius:50%; background:var(--navy); display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:900; color:var(--gold); overflow:hidden; border:3px solid var(--gold); flex-shrink:0; cursor:pointer; position:relative; }
+.profile-avatar-big img { width:100%; height:100%; object-fit:cover; }
+.profile-avatar-big .avatar-edit { position:absolute; inset:0; background:rgba(0,0,0,0.5); display:none; align-items:center; justify-content:center; color:var(--white); font-size:20px; border-radius:50%; }
+.profile-avatar-big:hover .avatar-edit { display:flex; }
+.profile-info h2 { color:var(--navy); font-size:22px; }
+.profile-info p { color:var(--gray-500); font-size:14px; }
+.profile-info .tags { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+.tag { background:var(--gold-pale); color:var(--gold); padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; }
+
+/* Upload area */
+.upload-area { border:2px dashed var(--gold); border-radius:var(--radius); padding:30px; text-align:center; cursor:pointer; transition:.2s; }
+.upload-area:hover { background:var(--gold-pale); }
+.upload-area.dragover { background:var(--gold-pale); border-color:var(--navy); }
+
+/* Notification */
+.notif { position:fixed; bottom:20px; right:20px; background:var(--navy); color:var(--white); padding:14px 20px; border-radius:var(--radius-sm); box-shadow:var(--shadow); z-index:9999; max-width:320px; display:none; animation:slideUp .3s ease; }
+@keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+.notif.show { display:block; }
+.notif.success { background:var(--success); }
+.notif.error { background:var(--danger); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width:6px; height:6px; }
+::-webkit-scrollbar-track { background:var(--gray-200); }
+::-webkit-scrollbar-thumb { background:var(--gold); border-radius:3px; }
+
+.hidden { display:none !important; }
+.flex { display:flex; }
+.gap-2 { gap:8px; }
+.gap-3 { gap:12px; }
+.items-center { align-items:center; }
+.justify-between { justify-content:space-between; }
+.text-center { text-align:center; }
+.mt-3 { margin-top:12px; }
+.mb-3 { margin-bottom:12px; }
+.text-sm { font-size:13px; }
+.text-gray { color:var(--gray-500); }
+.text-navy { color:var(--navy); }
+.text-gold { color:var(--gold); }
+.text-danger { color:var(--danger); }
+.font-bold { font-weight:700; }
+.w-full { width:100%; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.admin-section { display:none; }
+.admin-section.active { display:block; }
+.checkbox-list { display:flex; flex-direction:column; gap:8px; max-height:200px; overflow-y:auto; }
+.checkbox-item { display:flex; align-items:center; gap:8px; font-size:13px; }
+input[type=checkbox] { width:16px; height:16px; }
+.divider { border:none; border-top:1px solid var(--gray-200); margin:16px 0; }
+.live-broadcast-box { background:var(--gray-900); border-radius:var(--radius); padding:20px; margin-bottom:20px; }
+.live-broadcast-box video { width:100%; border-radius:var(--radius-sm); max-height:360px; }
+.permissions-badge { background:var(--gold-pale); border:1px solid var(--gold); border-radius:var(--radius-sm); padding:6px 10px; font-size:12px; color:var(--gold); display:inline-block; margin:3px; }
+</style>
+  <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.20.0.js"></script>
+</head>
+<body>
+
+<!-- ========== LOGIN SCREEN ========== -->
+<div id="loginScreen" class="screen active">
+  <div class="login-box">
+    <div class="logo-area">
+      <div class="logo-circle"><span>FM</span></div>
+      <h1>Full Mark Platform</h1>
+      <p>More Than Just Success</p>
+    </div>
+    <div class="login-tabs">
+      <button class="active" onclick="switchLoginTab('student')">🎓 طالب</button>
+      <button onclick="switchLoginTab('admin')">🔐 أدمن</button>
+    </div>
+    <div id="loginStudentForm">
+      <div class="form-group">
+        <label>اسم المستخدم</label>
+        <input type="text" id="loginUser" placeholder="أدخل اسم المستخدم">
+      </div>
+      <div class="form-group">
+        <label>كلمة المرور</label>
+        <input type="password" id="loginPass" placeholder="أدخل كلمة المرور">
+      </div>
+      <div class="error-msg" id="loginError">❌ اسم المستخدم أو كلمة المرور غير صحيحة</div>
+      <button class="btn btn-primary btn-full mt-3" onclick="doLogin()">تسجيل الدخول</button>
+    </div>
+    <div id="loginAdminForm" class="hidden">
+      <div class="form-group">
+        <label>اسم المستخدم</label>
+        <input type="text" id="adminUser" placeholder="اسم المستخدم">
+      </div>
+      <div class="form-group">
+        <label>كلمة المرور</label>
+        <input type="password" id="adminPass" placeholder="كلمة المرور">
+      </div>
+      <div class="error-msg" id="adminError">❌ بيانات الأدمن غير صحيحة</div>
+      <button class="btn btn-primary btn-full mt-3" onclick="doAdminLogin()">دخول لوحة الأدمن</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== WHATSAPP STEP ========== -->
+<div id="waScreen" class="screen">
+  <div class="wa-box">
+    <div class="wa-icon">📱</div>
+    <h2>رقم الواتساب</h2>
+    <p>أدخل رقم واتساپ للتواصل معك (11 رقم بدون كود الدولة)</p>
+    <div class="form-group">
+      <label>رقم الواتساب</label>
+      <input type="tel" id="waInput" placeholder="01012345678" maxlength="11" pattern="[0-9]{11}" inputmode="numeric" style="text-align:left;direction:ltr">
+    </div>
+    <div class="error-msg" id="waError">❌ أدخل 11 رقماً بالضبط</div>
+    <button class="btn btn-primary btn-full mt-3" onclick="saveWa()">حفظ ومتابعة</button>
+  </div>
+</div>
+
+<!-- ========== PROFILE SETUP ========== -->
+<div id="profileScreen" class="screen">
+  <div class="profile-box">
+    <h2>🎓 أكمل بياناتك</h2>
+    <div class="form-group">
+      <label>المرحلة الدراسية</label>
+      <div class="stage-cards">
+        <div class="stage-card" onclick="selectStage('primary',this)">
+          <div class="icon">🏫</div>
+          <div class="label">ابتدائي</div>
+        </div>
+        <div class="stage-card" onclick="selectStage('middle',this)">
+          <div class="icon">📚</div>
+          <div class="label">إعدادي</div>
+        </div>
+        <div class="stage-card" onclick="selectStage('secondary',this)">
+          <div class="icon">🎓</div>
+          <div class="label">ثانوي</div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group" id="gradeGroup" style="display:none">
+      <label>الصف الدراسي</label>
+      <select id="gradeSelect"><option value="">اختر الصف</option></select>
+    </div>
+    <div class="form-group" id="subjectsGroup" style="display:none">
+      <label>المواد الدراسية (اختر ما تريد)</label>
+      <div id="subjectsCheckList" class="checkbox-list"></div>
+    </div>
+    <button class="btn btn-primary btn-full mt-3" onclick="saveProfile()">حفظ وانطلق 🚀</button>
+    <div class="error-msg" id="profileError">❌ أكمل جميع البيانات</div>
+  </div>
+</div>
+
+<!-- ========== MAIN APP ========== -->
+<div id="mainScreen" class="screen">
+  <div class="top-bar">
+    <div class="logo">
+      <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--navy);font-size:14px">FM</div>
+      <div>
+        <span>Full Mark</span><br>
+        <small>More Than Just Success</small>
+      </div>
+    </div>
+    <div class="top-bar-right">
+      <span id="topUserName" style="font-size:13px;"></span>
+      <div class="user-avatar-small" id="topAvatarBtn" onclick="goPage('profile')">
+        <span id="topAvatarText"></span>
+      </div>
+      <button class="btn btn-xs" style="background:rgba(255,255,255,0.2);color:white;border-radius:20px;" onclick="doLogout()">خروج</button>
+    </div>
+  </div>
+  <div class="nav-bar" id="navBar">
+    <button class="nav-btn active" onclick="goPage('home')" id="navHome">🏠 الرئيسية</button>
+    <button class="nav-btn" onclick="goPage('content')" id="navContent">📚 المحتوى</button>
+    <button class="nav-btn" onclick="goPage('live')" id="navLive">📡 البث</button>
+    <button class="nav-btn" onclick="goPage('chat')" id="navChat">💬 الشات</button>
+    <button class="nav-btn" onclick="goPage('profile')" id="navProfile">👤 ملفي</button>
+    <button class="nav-btn hidden" onclick="goPage('admin')" id="navAdmin">⚙️ الأدمن</button>
+  </div>
+  <div class="main-content">
+
+    <!-- HOME PAGE -->
+    <div class="page active" id="homePage">
+      <div class="feed-layout">
+        <div>
+          <!-- Stories -->
+          <div class="stories-row" id="storiesRow"></div>
+          <!-- Create Post (admin + permitted) -->
+          <div class="create-post-box" id="createPostBox">
+            <div class="create-post-input">
+              <div class="post-avatar" id="createAvatar" style="width:40px;height:40px;font-size:16px;"></div>
+              <textarea id="postTextarea" placeholder="شارك شيئاً مع الطلاب..."></textarea>
+            </div>
+            <div class="create-post-actions">
+              <label class="btn btn-sm btn-outline" style="cursor:pointer">
+                📷 صورة <input type="file" class="upload-post-img" id="postImgInput" accept="image/*" onchange="previewPostImg(this)">
+              </label>
+              <label class="btn btn-sm btn-outline" style="cursor:pointer">
+                🎬 فيديو <input type="file" class="upload-post-img" id="postVidInput" accept="video/*" onchange="previewPostVid(this)">
+              </label>
+              <button class="btn btn-sm btn-primary" onclick="publishPost()">نشر 📢</button>
+            </div>
+            <div id="postMediaPreview"></div>
+          </div>
+          <!-- Posts -->
+          <div id="postsFeed"></div>
+        </div>
+        <div>
+          <div class="sidebar-card">
+            <h3>👥 المتصلون الآن</h3>
+            <div id="onlineList"></div>
+          </div>
+          <div class="sidebar-card" id="myProfileMini">
+            <h3>👤 ملفي</h3>
+            <div id="myProfileMiniContent"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENT PAGE -->
+    <div class="page" id="contentPage">
+      <div class="breadcrumb" id="breadcrumb">
+        <button onclick="navContent('stages')">المراحل</button>
+      </div>
+      <div id="stagesView">
+        <div class="stage-selector">
+          <button class="stage-btn active" onclick="selectContentStage('primary',this)">🏫 ابتدائي</button>
+          <button class="stage-btn" onclick="selectContentStage('middle',this)">📚 إعدادي</button>
+          <button class="stage-btn" onclick="selectContentStage('secondary',this)">🎓 ثانوي</button>
+        </div>
+        <div class="grade-grid" id="gradeGrid"></div>
+      </div>
+      <div id="subjectsView" class="hidden">
+        <h3 class="mb-3 text-navy" id="selectedGradeTitle"></h3>
+        <div class="subject-grid" id="subjectGrid"></div>
+      </div>
+      <div id="contentView" class="hidden">
+        <div class="unlock-box" id="unlockBox">
+          <div style="font-size:36px;margin-bottom:8px">🔐</div>
+          <h3 class="text-navy">هذا المحتوى مقفل</h3>
+          <p class="text-sm text-gray" style="margin:8px 0">أدخل الكود السري لفتح المادة</p>
+          <div style="display:flex;gap:8px;max-width:300px;margin:0 auto">
+            <input type="text" id="codeInput" placeholder="الكود السري" style="flex:1;padding:10px;border:2px solid var(--gold);border-radius:8px;font-size:15px;text-align:center">
+            <button class="btn btn-gold" onclick="unlockContent()">فتح</button>
+          </div>
+          <div class="error-msg" id="codeError" style="display:block;visibility:hidden">خطأ</div>
+        </div>
+        <div id="contentList" class="content-list hidden"></div>
+      </div>
+    </div>
+
+    <!-- LIVE PAGE -->
+    <div class="page" id="livePage">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-navy font-bold">📡 البث المباشر</h2>
+        <div id="startLiveBtn"></div>
+      </div>
+      <!-- Broadcast box (for admin/permitted) -->
+      <div id="broadcastBox" class="hidden">
+        <div class="live-broadcast-box">
+          <div id="broadcastPreview" style="width:100%;height:300px;background:#111;border-radius:8px;overflow:hidden;"></div>
+          <div class="live-controls" style="margin-top:10px">
+            <span style="color:white" id="broadcastStatus">📷 جاهز للبث</span>
+            <button class="btn btn-success btn-sm" id="startStreamBtn" onclick="startStream()">▶ بدء البث</button>
+            <button class="btn btn-danger btn-sm hidden" id="stopStreamBtn" onclick="stopStream()">⏹ إنهاء البث</button>
+          </div>
+        </div>
+      </div>
+      <!-- Live list -->
+      <div class="live-grid" id="liveGrid"></div>
+      <!-- Viewer box -->
+      <div id="liveViewerBox" class="hidden">
+        <div class="live-viewer">
+          <div id="viewerVideo" style="width:100%;height:380px;background:#000;"></div>
+          <div class="live-viewer-badge">🔴 LIVE</div>
+        </div>
+        <div class="live-controls">
+          <span id="viewerStreamTitle" style="font-weight:700;color:var(--navy);flex:1"></span>
+          <button class="btn btn-danger btn-sm" onclick="leaveLive()">⬅ مغادرة</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHAT PAGE -->
+    <div class="page" id="chatPage">
+      <h2 class="text-navy font-bold mb-3">💬 الشات الجماعي</h2>
+      <div id="chatBlockedBar" style="display:none;background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:8px 12px;margin-bottom:10px;flex-wrap:wrap;gap:4px;"></div>
+      <div class="chat-container">
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-row">
+          <input type="text" id="chatInput" placeholder="اكتب رسالتك..." onkeydown="if(event.key==='Enter')sendChat()">
+          <button class="btn btn-primary" onclick="sendChat()">إرسال ➤</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE PAGE -->
+    <div class="page" id="profilePage">
+      <div class="profile-header">
+        <div class="profile-avatar-big" id="bigAvatarDiv" onclick="triggerAvatarUpload()">
+          <span id="bigAvatarText"></span>
+          <div class="avatar-edit">✏️</div>
+        </div>
+        <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
+        <div class="profile-info">
+          <h2 id="profileName"></h2>
+          <p id="profileUsername"></p>
+          <p id="profilePhone"></p>
+          <div class="tags" id="profileTags"></div>
+          <div style="margin-top:8px" id="profilePermsDiv"></div>
+        </div>
+      </div>
+      <div class="sidebar-card">
+        <h3>📊 إحصائياتي</h3>
+        <div class="grid-2">
+          <div style="text-align:center;padding:12px;background:var(--gray-100);border-radius:8px">
+            <div style="font-size:24px;font-weight:900;color:var(--navy)" id="statPosts">0</div>
+            <div style="font-size:12px;color:var(--gray-500)">بوستاتي</div>
+          </div>
+          <div style="text-align:center;padding:12px;background:var(--gray-100);border-radius:8px">
+            <div style="font-size:24px;font-weight:900;color:var(--navy)" id="statLogins">0</div>
+            <div style="font-size:12px;color:var(--gray-500)">مرات الدخول</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN PAGE -->
+    <div class="page" id="adminPage">
+      <div class="admin-tabs" id="adminTabsBar">
+        <button class="admin-tab admin-only active" onclick="switchAdminTab('stats')">📊 الإحصائيات</button>
+        <button class="admin-tab admin-only" onclick="switchAdminTab('students')">👥 الطلاب</button>
+        <button class="admin-tab" id="adminTabContent" onclick="switchAdminTab('content')">📚 المحتوى</button>
+        <button class="admin-tab admin-only" onclick="switchAdminTab('codes')">🔑 الأكواد</button>
+        <button class="admin-tab admin-only" onclick="switchAdminTab('log')">📋 السجل</button>
+        <button class="admin-tab" id="adminTabLive" onclick="switchAdminTab('live')">📡 البث</button>
+      </div>
+
+      <!-- Stats -->
+      <div class="admin-section active" id="adminStats">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-num" id="statStudents">0</div><div class="stat-label">طالب مسجل</div></div>
+          <div class="stat-card"><div class="stat-num" id="statContents">0</div><div class="stat-label">محتوى منشور</div></div>
+          <div class="stat-card"><div class="stat-num" id="statCodes">0</div><div class="stat-label">كود متاح</div></div>
+          <div class="stat-card"><div class="stat-num" id="statPostsAdmin">0</div><div class="stat-label">بوستات</div></div>
+        </div>
+      </div>
+
+      <!-- Students -->
+      <div class="admin-section" id="adminStudents">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-navy font-bold">إدارة الطلاب</h3>
+          <button class="btn btn-primary btn-sm" onclick="openCreateStudentModal()">➕ طالب جديد</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="admin-table" id="studentsTable">
+            <thead><tr><th>الاسم</th><th>المستخدم</th><th>الصف</th><th>الواتساب</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
+            <tbody id="studentsBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="admin-section" id="adminContent">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-navy font-bold">إدارة المحتوى</h3>
+          <button class="btn btn-primary btn-sm" onclick="openUploadModal()">➕ رفع محتوى</button>
+        </div>
+        <div id="adminContentList"></div>
+      </div>
+
+      <!-- Codes -->
+      <div class="admin-section" id="adminCodes">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-navy font-bold">إدارة الأكواد</h3>
+          <button class="btn btn-primary btn-sm" onclick="openCreateCodeModal()">➕ كود جديد</button>
+        </div>
+        <div id="codesTable"></div>
+      </div>
+
+      <!-- Login Log -->
+      <div class="admin-section" id="adminLog">
+        <h3 class="text-navy font-bold mb-3">سجل تسجيل الدخول</h3>
+        <div style="overflow-x:auto">
+          <table class="admin-table">
+            <thead><tr><th>المستخدم</th><th>التاريخ</th><th>الوقت</th></tr></thead>
+            <tbody id="logBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Live Admin -->
+      <div class="admin-section" id="adminLive">
+        <h3 class="text-navy font-bold mb-3">إدارة البث المباشر</h3>
+        <div id="adminLiveStatus"></div>
+        <div id="adminBroadcastSection">
+          <div class="live-broadcast-box">
+            <div id="adminBroadcastPreview" style="width:100%;height:300px;background:#111;border-radius:8px;overflow:hidden;"></div>
+            <div class="live-controls" style="margin-top:10px">
+              <span style="color:white" id="adminBroadcastStatus">📷 جاهز للبث</span>
+              <button class="btn btn-success btn-sm" id="adminStartStreamBtn" onclick="adminStartStream()">▶ بدء البث الرسمي</button>
+              <button class="btn btn-danger btn-sm hidden" id="adminStopStreamBtn" onclick="adminStopStream()">⏹ إنهاء البث</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========== MODALS ========== -->
+
+<!-- Create Student -->
+<div class="modal-overlay" id="createStudentModal">
+  <div class="modal-box">
+    <h3>➕ إنشاء حساب طالب</h3>
+    <div class="form-group"><label>الاسم الكامل</label><input type="text" id="newStudentName" placeholder="اسم الطالب"></div>
+    <div class="form-group"><label>اسم المستخدم</label><input type="text" id="newStudentUser" placeholder="username"></div>
+    <div class="form-group"><label>كلمة المرور</label><input type="text" id="newStudentPass" placeholder="password"></div>
+    <hr class="divider">
+    <h4 class="text-navy mb-3">🔐 الصلاحيات الخاصة</h4>
+    <div class="form-group">
+      <label><input type="checkbox" id="permCanUpload" onchange="togglePermUI()"> ✅ صلاحية رفع المحتوى</label>
+    </div>
+    <div id="uploadPermDetail" class="hidden" style="margin-right:20px;background:var(--gold-pale);padding:12px;border-radius:8px;margin-bottom:12px">
+      <div class="form-group">
+        <label>المرحلة المسموح بها للرفع</label>
+        <select id="permUploadStage" onchange="updatePermGrades('upload')">
+          <option value="">اختر المرحلة</option>
+          <option value="primary">ابتدائي</option>
+          <option value="middle">إعدادي</option>
+          <option value="secondary">ثانوي</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>الصفوف المسموح بها</label>
+        <div id="permUploadGrades" class="checkbox-list"></div>
+      </div>
+      <div class="form-group">
+        <label>المواد المسموح بها</label>
+        <div id="permUploadSubjects" class="checkbox-list"></div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label><input type="checkbox" id="permCanLive" onchange="togglePermUI()"> 📡 صلاحية البث المباشر</label>
+    </div>
+    <div id="livePermDetail" class="hidden" style="margin-right:20px;background:#e8f4fd;padding:12px;border-radius:8px;margin-bottom:12px">
+      <div class="form-group">
+        <label>المرحلة المسموح بها للبث</label>
+        <select id="permLiveStage" onchange="updatePermGrades('live')">
+          <option value="">اختر المرحلة</option>
+          <option value="primary">ابتدائي</option>
+          <option value="middle">إعدادي</option>
+          <option value="secondary">ثانوي</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>الصفوف المسموح بها للبث</label>
+        <div id="permLiveGrades" class="checkbox-list"></div>
+      </div>
+      <div class="form-group">
+        <label>المواد المسموح بها للبث</label>
+        <div id="permLiveSubjects" class="checkbox-list"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('createStudentModal')">إلغاء</button>
+      <button class="btn btn-primary" onclick="createStudent()">إنشاء الحساب</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Permissions -->
+<div class="modal-overlay" id="editPermModal">
+  <div class="modal-box">
+    <h3>🔐 تعديل صلاحيات: <span id="editPermName"></span></h3>
+    <div class="form-group">
+      <label><input type="checkbox" id="editPermCanUpload" onchange="toggleEditPermUI()"> ✅ صلاحية رفع المحتوى</label>
+    </div>
+    <div id="editUploadPermDetail" class="hidden" style="margin-right:20px;background:var(--gold-pale);padding:12px;border-radius:8px;margin-bottom:12px">
+      <div class="form-group">
+        <label>المرحلة</label>
+        <select id="editPermUploadStage" onchange="updateEditPermGrades('upload')">
+          <option value="">اختر</option>
+          <option value="primary">ابتدائي</option>
+          <option value="middle">إعدادي</option>
+          <option value="secondary">ثانوي</option>
+        </select>
+      </div>
+      <div class="form-group"><label>الصفوف</label><div id="editPermUploadGrades" class="checkbox-list"></div></div>
+      <div class="form-group"><label>المواد</label><div id="editPermUploadSubjects" class="checkbox-list"></div></div>
+    </div>
+    <div class="form-group">
+      <label><input type="checkbox" id="editPermCanLive" onchange="toggleEditPermUI()"> 📡 صلاحية البث</label>
+    </div>
+    <div id="editLivePermDetail" class="hidden" style="margin-right:20px;background:#e8f4fd;padding:12px;border-radius:8px;margin-bottom:12px">
+      <div class="form-group">
+        <label>المرحلة</label>
+        <select id="editPermLiveStage" onchange="updateEditPermGrades('live')">
+          <option value="">اختر</option>
+          <option value="primary">ابتدائي</option>
+          <option value="middle">إعدادي</option>
+          <option value="secondary">ثانوي</option>
+        </select>
+      </div>
+      <div class="form-group"><label>الصفوف</label><div id="editPermLiveGrades" class="checkbox-list"></div></div>
+      <div class="form-group"><label>المواد</label><div id="editPermLiveSubjects" class="checkbox-list"></div></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('editPermModal')">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveEditPerms()">حفظ الصلاحيات</button>
+    </div>
+  </div>
+</div>
+
+<!-- Upload Content -->
+<div class="modal-overlay" id="uploadModal">
+  <div class="modal-box">
+    <h3>📤 رفع محتوى جديد</h3>
+    <div class="form-group"><label>عنوان المحتوى</label><input type="text" id="uploadTitle" placeholder="عنوان الدرس"></div>
+    <div class="form-group"><label>نوع المحتوى</label>
+      <select id="uploadType" onchange="updateUploadTypeUI()">
+        <option value="video_yt">🎬 فيديو يوتيوب</option>
+        <option value="video_file">📁 فيديو من الجهاز</option>
+        <option value="text">📝 نص تعليمي</option>
+        <option value="pdf">📄 ملف PDF/Word</option>
+      </select>
+    </div>
+    <div id="ytUrlGroup" class="form-group"><label>رابط يوتيوب</label><input type="text" id="ytUrl" placeholder="https://youtube.com/..."></div>
+    <div id="videoFileGroup" class="form-group hidden">
+      <label>رفع الفيديو (MP4/MOV/AVI/MKV/WebM - حتى 500MB)</label>
+      <div class="upload-area" onclick="document.getElementById('videoFileInput').click()" ondragover="this.classList.add('dragover');event.preventDefault()" ondrop="handleVideoDrop(event)">
+        <div style="font-size:40px">🎬</div>
+        <p>اضغط هنا أو اسحب الفيديو</p>
+        <p class="text-sm text-gray" id="videoFileName">لم يُختر ملف</p>
+        <div id="videoUploadProgress" style="width:0%;height:4px;background:var(--gold);border-radius:2px;margin-top:8px;transition:.3s"></div>
+      </div>
+      <input type="file" id="videoFileInput" accept="video/*" style="display:none" onchange="handleVideoFile(this)">
+    </div>
+    <div id="textContentGroup" class="form-group hidden"><label>النص التعليمي</label><textarea id="textContent" placeholder="اكتب النص هنا..." style="width:100%;height:120px;padding:10px;border:2px solid var(--gray-300);border-radius:8px;font-family:inherit;font-size:14px;resize:vertical"></textarea></div>
+    <div id="pdfFileGroup" class="form-group hidden">
+      <label>رفع ملف PDF أو Word</label>
+      <input type="file" id="pdfFileInput" accept=".pdf,.doc,.docx">
+    </div>
+    <hr class="divider">
+    <div class="form-group">
+      <label>المرحلة</label>
+      <select id="uploadStage" onchange="updateUploadGrades()">
+        <option value="">اختر المرحلة</option>
+        <option value="primary">ابتدائي</option>
+        <option value="middle">إعدادي</option>
+        <option value="secondary">ثانوي</option>
+      </select>
+    </div>
+    <div class="form-group"><label>الصف</label><select id="uploadGrade"><option value="">اختر الصف</option></select></div>
+    <div class="form-group"><label>المادة</label><select id="uploadSubject"><option value="">اختر المادة</option></select></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('uploadModal')">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveUpload()">رفع المحتوى</button>
+    </div>
+  </div>
+</div>
+
+<!-- Create Code -->
+<div class="modal-overlay" id="createCodeModal">
+  <div class="modal-box">
+    <h3>🔑 إنشاء كود جديد</h3>
+    <div class="form-group"><label>الكود</label><input type="text" id="newCodeVal" placeholder="FM2024"></div>
+    <div class="form-group"><label>التسمية</label><input type="text" id="newCodeLabel" placeholder="وصف الكود"></div>
+    <div class="form-group">
+      <label>المرحلة</label>
+      <select id="newCodeStage" onchange="updateCodeGrades()">
+        <option value="all">جميع المراحل</option>
+        <option value="primary">ابتدائي</option>
+        <option value="middle">إعدادي</option>
+        <option value="secondary">ثانوي</option>
+      </select>
+    </div>
+    <div class="form-group"><label>الصف</label><select id="newCodeGrade"><option value="all">جميع الصفوف</option></select></div>
+    <div class="form-group"><label>المادة</label>
+      <select id="newCodeSubject">
+        <option value="all">جميع المواد</option>
+        <option value="الرياضيات">الرياضيات</option>
+        <option value="العلوم">العلوم</option>
+        <option value="اللغة العربية">اللغة العربية</option>
+        <option value="اللغة الإنجليزية">اللغة الإنجليزية</option>
+        <option value="الدراسات الاجتماعية">الدراسات الاجتماعية</option>
+        <option value="الفيزياء">الفيزياء</option>
+        <option value="الكيمياء">الكيمياء</option>
+        <option value="الأحياء">الأحياء</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('createCodeModal')">إلغاء</button>
+      <button class="btn btn-primary" onclick="createCode()">إنشاء الكود</button>
+    </div>
+  </div>
+</div>
+
+<!-- WhatsApp Send Codes Modal -->
+<div class="modal-overlay" id="sendWaModal">
+  <div class="modal-box">
+    <h3>📲 إرسال كود على واتساب</h3>
+    <div class="form-group"><label>اختر الكود</label><select id="waCodeSelect"></select></div>
+    <div class="form-group">
+      <label>اختر الطلاب</label>
+      <div id="waStudentList" class="checkbox-list" style="max-height:250px"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('sendWaModal')">إلغاء</button>
+      <button class="btn btn-success" onclick="sendCodesToWa()">📲 إرسال</button>
+    </div>
+  </div>
+</div>
+
+<!-- Story Viewer -->
+<div class="story-viewer-overlay" id="storyViewer">
+  <div class="story-viewer-inner">
+    <div class="story-progress" id="storyProgress"></div>
+    <button class="story-close" onclick="closeStoryViewer()">✕</button>
+    <div class="story-user-info" id="storyUserInfo"></div>
+    <div class="story-content" id="storyContent"></div>
+  </div>
+</div>
+
+<!-- Story Create -->
+<div id="createStoryModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:3000;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:16px;padding:28px;width:100%;max-width:480px;">
+    <h3 style="color:#0d2155;margin-bottom:20px;">➕ نشر ستوري</h3>
+    <div style="margin-bottom:14px;">
+      <label style="display:block;font-weight:600;margin-bottom:6px;color:#0d2155;font-size:14px;">نص الستوري (اختياري)</label>
+      <input type="text" id="storyText" placeholder="اكتب شيئاً..." style="width:100%;padding:10px 14px;border:2px solid #dee2e6;border-radius:8px;font-size:15px;font-family:inherit;">
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="display:block;font-weight:600;margin-bottom:6px;color:#0d2155;font-size:14px;">صورة (اختياري)</label>
+      <input type="file" id="storyImgInput" accept="image/*" style="width:100%;">
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="display:block;font-weight:600;margin-bottom:6px;color:#0d2155;font-size:14px;">فيديو (اختياري)</label>
+      <input type="file" id="storyVidInput" accept="video/*" style="width:100%;">
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;">
+      <button onclick="closeStoryModal()" style="padding:10px 20px;border:2px solid #0d2155;background:transparent;color:#0d2155;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;">إلغاء</button>
+      <button onclick="publishStory()" style="padding:10px 20px;background:#0d2155;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;">نشر الستوري ✨</button>
+    </div>
+  </div>
+</div>
+
+<!-- Video Viewer -->
+<div class="modal-overlay" id="videoModal">
+  <div class="modal-box video-modal">
+    <h3 id="videoModalTitle"></h3>
+    <div id="videoModalContent" style="margin:12px 0"></div>
+    <div id="videoModalText" style="margin:12px 0;font-size:14px;line-height:1.7"></div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('videoModal')">إغلاق</button></div>
+  </div>
+</div>
+
+<!-- Reset Password Modal -->
+<div class="modal-overlay" id="resetPassModal">
+  <div class="modal-box">
+    <h3>🔄 ريست كلمة المرور</h3>
+    <input type="hidden" id="resetPassUser">
+    <div class="form-group"><label>كلمة المرور الجديدة</label><input type="text" id="newPassInput" placeholder="كلمة المرور الجديدة"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('resetPassModal')">إلغاء</button>
+      <button class="btn btn-primary" onclick="doResetPass()">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Notification -->
+<div class="notif" id="notif"></div>
+
+<script>
+// ============ AGORA CONFIG ============
+const AGORA_APP_ID = '638a3e9d9ffd40eba7788303a9684300'; // ← ضع App ID هنا من console.agora.io
+const AGORA_TOKEN  = null; // null للتطوير — في الإنتاج استخدم Token Server
+let agoraClient         = null;
+let agoraLocalAudioTrack = null;
+let agoraLocalVideoTrack = null;
+let currentLiveId       = null;
+let isHosting           = false;
+// =======================================
+
+// ============================================================
+// DATABASE (localStorage)
+// ============================================================
+const DB_KEY = 'fullmark_db';
+function getDB() {
+  const raw = localStorage.getItem(DB_KEY);
+  if (!raw) return initDB();
+  return JSON.parse(raw);
+}
+function saveDB(db) { localStorage.setItem(DB_KEY, JSON.stringify(db)); }
+function initDB() {
+  const db = {
+    accounts: [
+      { us:'admin', pw:'fullmark2024', role:'admin', name:'الأدمن', phone:'', stg:'', grd:'', sbjs:[], profileDone:true, avatarImg:'', perms:{canUpload:false,canLive:false,allowedGrades:[],allowedSubjects:[],allowedLiveGrades:[],allowedLiveSubjects:[]}, banned:false, loginCount:0, lastLogin:'' }
+    ],
+    contents: [], codes: [], loginLog: [], chatMsgs: [], stories: [], lives: [], posts: [], chatBlocked: []
+  };
+  saveDB(db);
+  return db;
+}
+
+// ============================================================
+// SESSION
+// ============================================================
+let currentUser = null;
+let broadcastChannel = null;
+let livePollingInterval = null;
+let storyTimer = null;
+let currentStoryIndex = 0;
+let currentStories = [];
+let editPermUsername = '';
+let tempVideoBlob = null;
+let tempStoryImg = null;
+let tempStoryVid = null;
+let tempPostImg = null;
+let tempPostVid = null;
+let selectedStage = 'primary';
+let selectedGradeKey = '';
+let selectedSubjectKey = '';
+
+function initSession() {
+  const saved = sessionStorage.getItem('fm_session');
+  if (saved) {
+    currentUser = JSON.parse(saved);
+    const db = getDB();
+    const acc = db.accounts.find(a => a.us === currentUser.us);
+    if (!acc || acc.banned) { doLogout(); return; }
+    currentUser = { ...acc };
+    sessionStorage.setItem('fm_session', JSON.stringify(currentUser));
+    launchApp();
+  } else {
+    showScreen('loginScreen');
+  }
+}
+
+// ============================================================
+// SCREENS
+// ============================================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+}
+
+// ============================================================
+// LOGIN
+// ============================================================
+function switchLoginTab(tab) {
+  document.querySelectorAll('.login-tabs button').forEach((b,i) => b.classList.toggle('active', (tab==='student'&&i===0)||(tab==='admin'&&i===1)));
+  document.getElementById('loginStudentForm').classList.toggle('hidden', tab!=='student');
+  document.getElementById('loginAdminForm').classList.toggle('hidden', tab!=='admin');
+}
+
+function doLogin() {
+  const us = document.getElementById('loginUser').value.trim();
+  const pw = document.getElementById('loginPass').value.trim();
+  const db = getDB();
+  const acc = db.accounts.find(a => a.us === us && a.pw === pw && a.role !== 'admin');
+  if (!acc) { document.getElementById('loginError').style.display = 'block'; return; }
+  if (acc.banned) { showNotif('⛔ حسابك محظور', 'error'); return; }
+  document.getElementById('loginError').style.display = 'none';
+  // log login
+  const now = new Date();
+  db.loginLog.unshift({ us: acc.us, name: acc.name, date: now.toLocaleDateString('ar'), time: now.toLocaleTimeString('ar') });
+  acc.loginCount = (acc.loginCount || 0) + 1;
+  acc.lastLogin = now.toISOString().split('T')[0];
+  saveDB(db);
+  currentUser = { ...acc };
+  sessionStorage.setItem('fm_session', JSON.stringify(currentUser));
+
+  // FIX #6: Only ask for WhatsApp/profile once
+  if (!acc.phone) {
+    showScreen('waScreen');
+  } else if (!acc.profileDone) {
+    showScreen('profileScreen');
+  } else {
+    launchApp();
+  }
+}
+
+function doAdminLogin() {
+  const us = document.getElementById('adminUser').value.trim();
+  const pw = document.getElementById('adminPass').value.trim();
+  const db = getDB();
+  const acc = db.accounts.find(a => a.us === us && a.pw === pw && a.role === 'admin');
+  if (!acc) { document.getElementById('adminError').style.display = 'block'; return; }
+  document.getElementById('adminError').style.display = 'none';
+  currentUser = { ...acc };
+  sessionStorage.setItem('fm_session', JSON.stringify(currentUser));
+  launchApp();
+}
+
+async function doLogout() {
+  // Stop Agora tracks if hosting
+  try {
+    if (agoraLocalAudioTrack) { agoraLocalAudioTrack.stop(); agoraLocalAudioTrack.close(); agoraLocalAudioTrack = null; }
+    if (agoraLocalVideoTrack) { agoraLocalVideoTrack.stop(); agoraLocalVideoTrack.close(); agoraLocalVideoTrack = null; }
+    if (agoraClient) { await agoraClient.leave(); agoraClient = null; }
+  } catch(e) {}
+  if (broadcastChannel) { broadcastChannel.close(); broadcastChannel = null; }
+  clearInterval(livePollingInterval);
+  currentUser = null;
+  isHosting = false;
+  currentLiveId = null;
+  sessionStorage.removeItem('fm_session');
+  showScreen('loginScreen');
+}
+
+// ============================================================
+// WHATSAPP (FIX #1: 11 digits)
+// ============================================================
+function saveWa() {
+  const val = document.getElementById('waInput').value.trim();
+  if (!/^\d{11}$/.test(val)) {
+    document.getElementById('waError').style.display = 'block';
+    return;
+  }
+  document.getElementById('waError').style.display = 'none';
+  const db = getDB();
+  const acc = db.accounts.find(a => a.us === currentUser.us);
+  acc.phone = val;
+  saveDB(db);
+  currentUser.phone = val;
+  sessionStorage.setItem('fm_session', JSON.stringify(currentUser));
+  if (!acc.profileDone) showScreen('profileScreen');
+  else launchApp();
+}
+
+// ============================================================
+// PROFILE SETUP (FIX #6: only once)
+// ============================================================
+const GRADES = {
+  primary: ['الصف الأول الابتدائي','الصف الثاني الابتدائي','الصف الثالث الابتدائي','الصف الرابع الابتدائي','الصف الخامس الابتدائي','الصف السادس الابتدائي'],
+  middle: ['الصف الأول الإعدادي','الصف الثاني الإعدادي','الصف الثالث الإعدادي'],
+  secondary: ['الصف الأول الثانوي','الصف الثاني الثانوي','الصف الثالث الثانوي']
+};
+const SUBJECTS = ['الرياضيات','العلوم','اللغة العربية','اللغة الإنجليزية','الدراسات الاجتماعية','التربية الدينية','الفيزياء','الكيمياء','الأحياء'];
+let chosenStage = '';
+
+function selectStage(stage, el) {
+  chosenStage = stage;
+  document.querySelectorAll('.stage-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const gradeEl = document.getElementById('gradeSelect');
+  gradeEl.innerHTML = '<option value="">اختر الصف</option>';
+  GRADES[stage].forEach(g => gradeEl.innerHTML += `<option value="${g}">${g}</option>`);
+  document.getElementById('gradeGroup').style.display = 'block';
+  const subList = document.getElementById('subjectsCheckList');
+  subList.innerHTML = SUBJECTS.map(s => `<label class="checkbox-item"><input type="checkbox" value="${s}"> ${s}</label>`).join('');
+  document.getElementById('subjectsGroup').style.display = 'block';
+}
+
+function saveProfile() {
+  const grade = document.getElementById('gradeSelect').value;
+  const checked = [...document.querySelectorAll('#subjectsCheckList input:checked')].map(c => c.value);
+  if (!chosenStage || !grade || checked.length === 0) {
+    document.getElementById('profileError').style.display = 'block';
+    return;
+  }
+  document.getElementById('profileError').style.display = 'none';
+  const db = getDB();
+  const acc = db.accounts.find(a => a.us === currentUser.us);
+  acc.stg = chosenStage; acc.grd = grade; acc.sbjs = checked; acc.profileDone = true;
+  saveDB(db);
+  Object.assign(currentUser, { stg: chosenStage, grd: grade, sbjs: checked, profileDone: true });
+  sessionStorage.setItem('fm_session', JSON.stringify(currentUser));
+  launchApp();
+}
+
+// ============================================================
+// LAUNCH APP
+// ============================================================
+function launchApp() {
+  showScreen('mainScreen');
+  if (currentUser.role === 'admin') {
+    document.getElementById('navAdmin').classList.remove('hidden');
+  }
+  updateTopBar();
+  setupBroadcastChannel();
+  setupStorageListener();
+  startLivePolling();
+  goPage('home');
+  renderAdminStats();
+}
+
+function updateTopBar() {
+  document.getElementById('topUserName').textContent = currentUser.name || currentUser.us;
+  const initials = (currentUser.name || currentUser.us).charAt(0).toUpperCase();
+  const topAv = document.getElementById('topAvatarBtn');
+  if (currentUser.avatarImg) {
+    topAv.innerHTML = `<img src="${currentUser.avatarImg}" alt="avatar">`;
+  } else {
+    topAv.innerHTML = `<span id="topAvatarText">${initials}</span>`;
+  }
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function goPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const pageEl = document.getElementById(page + 'Page');
+  const navEl = document.getElementById('nav' + page.charAt(0).toUpperCase() + page.slice(1));
+  if (pageEl) pageEl.classList.add('active');
+  if (navEl) navEl.classList.add('active');
+  if (page === 'home') renderHome();
+  else if (page === 'content') initContentPage();
+  else if (page === 'live') renderLivePage();
+  else if (page === 'chat') { renderChat(); document.getElementById('chatInput').focus(); }
+  else if (page === 'profile') renderProfile();
+  else if (page === 'admin') { initAdminPage(); }
+}
+
+// ============================================================
+// HOME / FEED
+// ============================================================
+function renderHome() {
+  renderStories();
+  renderPosts();
+  renderOnlineList();
+  renderMyProfileMini();
+  // Show create post for admin or permitted users
+  const canPost = currentUser.role === 'admin';
+  document.getElementById('createPostBox').style.display = canPost ? 'block' : 'none';
+  // Show create story option
+  renderAddStoryBubble();
+}
+
+function renderStories() {
+  const db = getDB();
+  const row = document.getElementById('storiesRow');
+  let html = '';
+  // Add story bubble for admin
+  if (currentUser.role === 'admin') {
+    html += `<div class="story-bubble" onclick="openStoryModal()">
+      <div class="story-ring add-story"><div class="story-ring-inner">➕</div></div>
+      <p>أضف ستوري</p>
+    </div>`;
+  } else {
+    // Students can add story too
+    html += `<div class="story-bubble" onclick="openStoryModal()">
+      <div class="story-ring add-story"><div class="story-ring-inner">➕</div></div>
+      <p>ستوريتي</p>
+    </div>`;
+  }
+  // Group stories by user
+  const now = Date.now();
+  const activeStories = db.stories.filter(s => (now - s.ts) < 24*3600*1000);
+  const byUser = {};
+  activeStories.forEach(s => { if (!byUser[s.us]) byUser[s.us] = []; byUser[s.us].push(s); });
+  Object.keys(byUser).forEach(us => {
+    const stories = byUser[us];
+    const acc = db.accounts.find(a => a.us === us);
+    const name = acc ? acc.name : us;
+    const initials = name.charAt(0).toUpperCase();
+    const avatar = acc && acc.avatarImg ? `<img src="${acc.avatarImg}">` : initials;
+    const isOwner = us === currentUser.us;
+    const isAdmin2 = currentUser.role === 'admin';
+    const delBtn = (isAdmin2 || isOwner)
+      ? `<button onclick="event.stopPropagation();deleteAllStoriesOf('${us}')" style="position:absolute;top:-4px;left:-4px;background:var(--danger);border:none;color:white;width:20px;height:20px;border-radius:50%;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;z-index:2;">×</button>`
+      : '';
+    html += `<div class="story-bubble" onclick="viewStories('${us}')" style="position:relative;">
+      ${delBtn}
+      <div class="story-ring"><div class="story-ring-inner">${avatar}</div></div>
+      <p>${name}</p>
+    </div>`;
+  });
+  row.innerHTML = html;
+}
+
+function renderAddStoryBubble() {}
+
+function viewStories(us) {
+  try {
+    const db = getDB();
+    const now = Date.now();
+    currentStories = db.stories.filter(function(s) {
+      return s.us === us && (now - s.ts) < 24 * 3600 * 1000;
+    });
+    if (!currentStories.length) { showNotif('لا توجد ستوريات نشطة', 'error'); return; }
+    currentStoryIndex = 0;
+    const viewer = document.getElementById('storyViewer');
+    viewer.style.display = 'flex';
+    viewer.classList.add('open');
+    showStory();
+  } catch(err) {
+    console.error('viewStories error:', err);
+  }
+}
+
+function showStory() {
+  const story = currentStories[currentStoryIndex];
+  if (!story) { closeStoryViewer(); return; }
+  // Progress bars
+  const progressDiv = document.getElementById('storyProgress');
+  progressDiv.innerHTML = currentStories.map((s,i) => `
+    <div class="story-progress-bar ${i<currentStoryIndex?'done':''} ${i===currentStoryIndex?'active':''}">
+      ${i===currentStoryIndex?'<div class="story-progress-fill"></div>':''}
+    </div>`).join('');
+  // User info
+  const db = getDB();
+  const acc = db.accounts.find(a => a.us === story.us);
+  const name = acc ? acc.name : story.us;
+  const canDeleteStory = currentUser.role === 'admin' || story.us === currentUser.us;
+  const deleteStoryBtn = canDeleteStory
+    ? `<button onclick="deleteStory('${story.id}')" style="background:rgba(220,53,69,0.85);border:none;color:white;padding:5px 12px;border-radius:20px;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit;">🗑️ حذف</button>`
+    : '';
+  document.getElementById('storyUserInfo').innerHTML = `
+    <div style="width:32px;height:32px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;color:var(--navy);font-weight:700;font-size:14px">${name.charAt(0)}</div>
+    <div><strong style="color:white">${name}</strong><br><small>${new Date(story.ts).toLocaleTimeString('ar')}</small></div>
+    ${deleteStoryBtn}
+  `;
+  // Content
+  const contentDiv = document.getElementById('storyContent');
+  if (story.vidData) {
+    contentDiv.innerHTML = `<video src="${story.vidData}" autoplay loop style="max-width:100%;max-height:80vh;border-radius:12px"></video>`;
+  } else if (story.imgData) {
+    contentDiv.innerHTML = `<img src="${story.imgData}" alt="story" style="max-width:100%;max-height:80vh;border-radius:12px;object-fit:contain">`;
+  } else {
+    contentDiv.innerHTML = `<div class="story-text-big" style="background:linear-gradient(135deg,var(--navy),var(--navy-light));padding:40px;border-radius:16px;min-width:300px">${story.text||''}</div>`;
+  }
+  clearTimeout(storyTimer);
+  storyTimer = setTimeout(() => nextStory(), 5000);
+}
+
+function nextStory() {
+  currentStoryIndex++;
+  if (currentStoryIndex >= currentStories.length) closeStoryViewer();
+  else showStory();
+}
+
+function closeStoryViewer() {
+  const viewer = document.getElementById('storyViewer');
+  viewer.classList.remove('open');
+  viewer.style.display = 'none';
+  clearTimeout(storyTimer);
+  currentStories = [];
+  currentStoryIndex = 0;
+}
+
+function deleteAllStoriesOf(us) {
+  const name = us;
+  const db2 = getDB();
+  const acc2 = db2.accounts.find(a => a.us === us);
+  const displayName = acc2 ? acc2.name : us;
+  if (!confirm('حذف جميع ستوريات ' + displayName + '؟')) return;
+  const db = getDB();
+  db.stories = db.stories.filter(s => s.us !== us);
+  saveDB(db);
+  broadcastUpdate('stories');
+  if (currentStories.length && currentStories[0].us === us) closeStoryViewer();
+  renderStories();
+  showNotif('🗑️ تم حذف جميع ستوريات ' + displayName);
+}
+
+function deleteStory(storyId) {
+  if (!confirm('حذف هذا الستوري نهائياً؟')) return;
+  const db = getDB();
+  db.stories = db.stories.filter(s => s.id != storyId);
+  saveDB(db);
+  broadcastUpdate('stories');
+  // Remove from currentStories and continue or close
+  currentStories = currentStories.filter(s => s.id != storyId);
+  if (currentStories.length === 0) {
+    closeStoryViewer();
+  } else {
+    if (currentStoryIndex >= currentStories.length) currentStoryIndex = currentStories.length - 1;
+    showStory();
+  }
+  renderStories();
+  showNotif('🗑️ تم حذف الستوري');
+}
+
+function openStoryModal() {
+  var m = document.getElementById('createStoryModal');
+  m.style.display = 'flex';
+}
+function closeStoryModal() {
+  var m = document.getElementById('createStoryModal');
+  m.style.display = 'none';
+  var t = document.getElementById('storyText');
+  var i = document.getElementById('storyImgInput');
+  var v = document.getElementById('storyVidInput');
+  if(t) t.value = '';
+  if(i) i.value = '';
+  if(v) v.value = '';
+}
+
+function publishStory() {
+  try {
+    const textEl = document.getElementById('storyText');
+    const imgEl  = document.getElementById('storyImgInput');
+    const vidEl  = document.getElementById('storyVidInput');
+    const text   = textEl ? textEl.value.trim() : '';
+    const imgFile = imgEl && imgEl.files && imgEl.files[0] ? imgEl.files[0] : null;
+    const vidFile = vidEl && vidEl.files && vidEl.files[0] ? vidEl.files[0] : null;
+
+    if (!text && !imgFile && !vidFile) {
+      showNotif('أضف نص أو صورة أو فيديو للستوري', 'error');
+      return;
+    }
+
+    const story = {
+      id: 's' + Date.now(),
+      us: currentUser.us,
+      ts: Date.now(),
+      text: text || ''
+    };
+
+    const saveStory = () => {
+      try {
+        const db = getDB();
+        db.stories.unshift(story);
+        saveDB(db);
+      } catch(saveErr) {
+        if (saveErr.name === 'QuotaExceededError') {
+          showNotif('❌ مساحة التخزين ممتلئة - حاول نشر ستوري نص فقط', 'error');
+        } else {
+          showNotif('❌ فشل حفظ الستوري: ' + saveErr.message, 'error');
+        }
+        return;
+      }
+      // Reset form
+      if (textEl) textEl.value = '';
+      if (imgEl)  imgEl.value = '';
+      if (vidEl)  vidEl.value = '';
+      // Close modal
+      closeStoryModal();
+      // Refresh
+      renderStories();
+      broadcastUpdate('stories');
+      showNotif('✅ تم نشر الستوري بنجاح');
+    };
+
+    if (vidFile) {
+      const reader = new FileReader();
+      reader.onload = function(e) { story.vidData = e.target.result; saveStory(); };
+      reader.readAsDataURL(vidFile);
+    } else if (imgFile) {
+      const reader = new FileReader();
+      reader.onload = function(e) { story.imgData = e.target.result; saveStory(); };
+      reader.readAsDataURL(imgFile);
+    } else {
+      saveStory();
+    }
+  } catch(err) {
+    showNotif('❌ خطأ: ' + err.message, 'error');
+    console.error('publishStory error:', err);
+  }
+}
+
+// ============================================================
+// POSTS (FIX #8: full Facebook-like posts)
+// ============================================================
+function renderPosts() {
+  const db = getDB();
+  const container = document.getElementById('postsFeed');
+  if (!db.posts.length) { container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray-500)">لا توجد بوستات بعد</div>'; return; }
+  container.innerHTML = db.posts.map(p => renderPostHTML(p, db)).join('');
+}
+
+function renderPostHTML(p, db) {
+  if (!db) db = getDB();
+  const acc = db.accounts.find(a => a.us === p.us);
+  const name = acc ? acc.name : p.us;
+  const initials = name.charAt(0).toUpperCase();
+  const avatarHTML = acc && acc.avatarImg ? `<img src="${acc.avatarImg}" alt="avatar">` : initials;
+  const likes = p.likes || [];
+  const liked = likes.includes(currentUser.us);
+  const comments = p.comments || [];
+  const isRepost = !!p.originalPostId;
+  let repostNote = '';
+  if (isRepost) {
+    const origUs = p.originalUs || p.originalPostId;
+    const origAcc = origUs ? db.accounts.find(a => a.us === origUs) : null;
+    const origName = origAcc ? origAcc.name : (origUs || '');
+    repostNote = `<div class="repost-note">🔁 أعاد <strong>${escHtml(name)}</strong> نشر بوست من <strong>${escHtml(origName)}</strong></div>`;
+  }
+  // For reposts: load media from original post
+  let mediaSource = p;
+  if (p.originalPostId) {
+    const origPost = db.posts.find(function(op) { return op.id === p.originalPostId; });
+    if (origPost) mediaSource = origPost;
+  }
+  let mediaHTML = '';
+  if (mediaSource.imgData) mediaHTML = `<img class="post-img" src="${mediaSource.imgData}" alt="post image" onerror="this.style.display='none'">`;
+  else if (mediaSource.vidData) mediaHTML = `<video class="post-video" src="${mediaSource.vidData}" controls></video>`;
+  let commentsHTML = comments.map(c => {
+    const ca = db.accounts.find(a => a.us === c.us);
+    return `<div class="comment-item"><strong>${ca ? ca.name : c.us}:</strong> ${escHtml(c.text)}</div>`;
+  }).join('');
+  const canDelete = currentUser.role === 'admin' || p.us === currentUser.us;
+  const deleteBtn = canDelete ? `<button class="post-action-btn" onclick="deletePost('${p.id}')" style="margin-right:auto;color:var(--danger)">🗑️ حذف</button>` : '';
+  return `
+    <div class="post-card" id="post-${p.id}">
+      ${repostNote}
+      <div class="post-header">
+        <div class="post-avatar">${avatarHTML}</div>
+        <div class="post-meta">
+          <strong>${escHtml(name)}</strong>
+          <small>${new Date(p.ts).toLocaleString('ar')}</small>
+        </div>
+        ${deleteBtn}
+      </div>
+      ${p.text ? `<div class="post-text">${escHtml(p.text)}</div>` : ''}
+      ${mediaHTML}
+      <div class="post-actions">
+        <button class="post-action-btn ${liked?'liked':''}" onclick="toggleLike('${p.id}')">
+          ${liked?'❤️':'🤍'} ${likes.length} إعجاب
+        </button>
+        <button class="post-action-btn" onclick="toggleComments('${p.id}')">
+          💬 ${comments.length} تعليق
+        </button>
+        <button class="post-action-btn" onclick="repostPost('${p.id}')">🔁 إعادة نشر</button>
+      </div>
+      <div class="post-comments" id="comments-${p.id}" style="display:none">
+        <div id="commentsList-${p.id}">${commentsHTML}</div>
+        <div class="comment-input-row">
+          <div class="post-avatar" style="width:30px;height:30px;font-size:12px;flex-shrink:0">${avatarHTML}</div>
+          <input type="text" id="commentInput-${p.id}" placeholder="أضف تعليقاً..." onkeydown="if(event.key==='Enter')addComment('${p.id}')">
+          <button class="btn btn-xs btn-primary" onclick="addComment('${p.id}')">إرسال</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function previewPostImg(input) {
+  const file = input.files[0]; if (!file) return;
+  tempPostImg = null; tempPostVid = null;
+  const reader = new FileReader();
+  reader.onload = e => {
+    tempPostImg = e.target.result;
+    document.getElementById('postMediaPreview').innerHTML = `<img src="${tempPostImg}" style="max-height:200px;border-radius:8px;margin-top:8px">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function previewPostVid(input) {
+  const file = input.files[0]; if (!file) return;
+  tempPostImg = null;
+  const reader = new FileReader();
+  reader.onload = e => {
+    tempPostVid = e.target.result;
+    document.getElementById('postMediaPreview').innerHTML = `<video src="${tempPostVid}" controls style="max-height:200px;border-radius:8px;margin-top:8px;width:100%"></video>`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function publishPost() {
+  const text = document.getElementById('postTextarea').value.trim();
+  if (!text && !tempPostImg && !tempPostVid) { showNotif('أضف محتوى للبوست', 'error'); return; }
+  const db = getDB();
+  const post = { id: 'p'+Date.now(), us: currentUser.us, ts: Date.now(), text, imgData: tempPostImg||null, vidData: tempPostVid||null, likes:[], comments:[] };
+  db.posts.unshift(post);
+  saveDB(db);
+  broadcastUpdate('posts');
+  document.getElementById('postTextarea').value = '';
+  document.getElementById('postMediaPreview').innerHTML = '';
+  document.getElementById('postImgInput').value = '';
+  document.getElementById('postVidInput').value = '';
+  tempPostImg = null; tempPostVid = null;
+  renderPosts();
+  showNotif('✅ تم نشر البوست');
+}
+
+function toggleLike(postId) {
+  const db = getDB();
+  const post = db.posts.find(p => p.id === postId);
+  if (!post) return;
+  if (!post.likes) post.likes = [];
+  const idx = post.likes.indexOf(currentUser.us);
+  if (idx >= 0) post.likes.splice(idx, 1);
+  else post.likes.push(currentUser.us);
+  saveDB(db);
+  broadcastUpdate('posts');
+  renderPosts();
+}
+
+function toggleComments(postId) {
+  const el = document.getElementById('comments-' + postId);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function addComment(postId) {
+  const input = document.getElementById('commentInput-' + postId);
+  const text = input ? input.value.trim() : '';
+  if (!text) return;
+  const db = getDB();
+  const post = db.posts.find(p => p.id === postId);
+  if (!post) return;
+  if (!post.comments) post.comments = [];
+  post.comments.push({ us: currentUser.us, text, ts: Date.now() });
+  saveDB(db);
+  broadcastUpdate('posts');
+  renderPosts();
+  setTimeout(() => {
+    const el = document.getElementById('comments-' + postId);
+    if (el) el.style.display = 'block';
+  }, 50);
+}
+
+function repostPost(postId) {
+  var db = getDB();
+  var orig = null;
+  for (var i = 0; i < db.posts.length; i++) {
+    if (db.posts[i].id === postId) { orig = db.posts[i]; break; }
+  }
+  if (!orig) { showNotif('❌ البوست غير موجود', 'error'); return; }
+  var rootId = orig.originalPostId ? orig.originalPostId : orig.id;
+  var root = null;
+  for (var j = 0; j < db.posts.length; j++) {
+    if (db.posts[j].id === rootId) { root = db.posts[j]; break; }
+  }
+  if (!root) root = orig;
+  // Check duplicate
+  var already = false;
+  for (var k = 0; k < db.posts.length; k++) {
+    if (db.posts[k].us === currentUser.us && db.posts[k].originalPostId === rootId) {
+      already = true; break;
+    }
+  }
+  if (already) { showNotif('⚠️ أعدت نشر هذا البوست مسبقاً', 'error'); return; }
+  var repost = {
+    id: 'rp' + Date.now(),
+    us: currentUser.us,
+    ts: Date.now(),
+    text: root.text || '',
+    likes: [],
+    comments: [],
+    originalPostId: rootId,
+    originalUs: root.us
+  };
+  try {
+    db.posts.unshift(repost);
+    saveDB(db);
+  } catch(e) {
+    showNotif('❌ مساحة التخزين ممتلئة', 'error');
+    return;
+  }
+  broadcastUpdate('posts');
+  renderPosts();
+  showNotif('✅ تمت إعادة النشر على صفحتك');
+}
+
+function deletePost(postId) {
+  if (!confirm('حذف هذا البوست؟')) return;
+  const db = getDB();
+  db.posts = db.posts.filter(p => p.id !== postId);
+  saveDB(db);
+  broadcastUpdate('posts');
+  renderPosts();
+  showNotif('🗑️ تم حذف البوست');
+}
+
+function renderOnlineList() {
+  // Simulate online users
+  const db = getDB();
+  const container = document.getElementById('onlineList');
+  const students = db.accounts.filter(a => a.role !== 'admin').slice(0, 5);
+  container.innerHTML = students.map(s => `
+    <div class="online-user">
+      <div class="online-dot"></div>
+      <span class="online-name">${s.name||s.us}</span>
+    </div>`).join('') || '<p class="text-sm text-gray">لا أحد متصل</p>';
+}
+
+function renderMyProfileMini() {
+  const div = document.getElementById('myProfileMiniContent');
+  const initials = (currentUser.name||currentUser.us).charAt(0).toUpperCase();
+  const avatar = currentUser.avatarImg ? `<img src="${currentUser.avatarImg}" style="width:50px;height:50px;border-radius:50%;object-fit:cover">` : `<div style="width:50px;height:50px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:20px;font-weight:700">${initials}</div>`;
+  div.innerHTML = `
+    <div style="text-align:center">
+      ${avatar}
+      <div style="font-weight:700;color:var(--navy);margin-top:8px">${escHtml(currentUser.name||currentUser.us)}</div>
+      <div style="font-size:12px;color:var(--gray-500)">${currentUser.grd||'أدمن'}</div>
+      <button class="btn btn-outline btn-sm" style="margin-top:8px" onclick="goPage('profile')">عرض الملف</button>
+    </div>`;
+}
+
+// ============================================================
+// CONTENT PAGE
+// ============================================================
+let contentStage = 'primary';
+let contentGrade = '';
+let contentSubject = '';
+let unlockedSubjects = {};
+
+function initContentPage() {
+  navContent('stages');
+  renderGrades();
+}
+
+function selectContentStage(stage, el) {
+  contentStage = stage;
+  document.querySelectorAll('.stage-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderGrades();
+}
+
+function renderGrades() {
+  const grades = GRADES[contentStage];
+  const grid = document.getElementById('gradeGrid');
+  const icons = ['📗','📘','📙','📕','📒','📓'];
+  grid.innerHTML = grades.map((g, i) => `
+    <div class="grade-card" onclick="openGrade('${g}')">
+      <div class="icon">${icons[i]||'📚'}</div>
+      <h3>${g}</h3>
+    </div>`).join('');
+}
+
+function openGrade(grade) {
+  contentGrade = grade;
+  navContent('subjects');
+  document.getElementById('selectedGradeTitle').textContent = grade;
+  const subjectsList = ['الرياضيات','العلوم','اللغة العربية','اللغة الإنجليزية','الدراسات الاجتماعية','التربية الدينية'];
+  if (contentStage === 'secondary') subjectsList.push('الفيزياء','الكيمياء','الأحياء');
+  const grid = document.getElementById('subjectGrid');
+  const subIcons = {'الرياضيات':'🔢','العلوم':'🔬','اللغة العربية':'📖','اللغة الإنجليزية':'🌐','الدراسات الاجتماعية':'🌍','التربية الدينية':'☪️','الفيزياء':'⚡','الكيمياء':'🧪','الأحياء':'🧬'};
+  grid.innerHTML = subjectsList.map(s => {
+    const key = contentStage+'_'+grade+'_'+s;
+    const unlocked = unlockedSubjects[key] || currentUser.role === 'admin';
+    return `<div class="subject-card" onclick="openSubject('${s}')">
+      <div class="subject-icon">${subIcons[s]||'📚'}</div>
+      <div>
+        <div class="subject-name">${s}</div>
+        <div class="${unlocked?'unlocked-badge':'locked-badge'}">${unlocked?'✅ مفتوح':'🔐 مقفل'}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openSubject(subject) {
+  contentSubject = subject;
+  navContent('content');
+  const key = contentStage+'_'+contentGrade+'_'+subject;
+  const unlocked = unlockedSubjects[key] || currentUser.role === 'admin';
+  document.getElementById('unlockBox').style.display = unlocked ? 'none' : 'block';
+  document.getElementById('contentList').classList.toggle('hidden', !unlocked);
+  if (unlocked) loadContentList();
+}
+
+function unlockContent() {
+  const code = document.getElementById('codeInput').value.trim();
+  const db = getDB();
+  const codeObj = db.codes.find(c => c.vl === code && c.on);
+  if (!codeObj) {
+    const errEl = document.getElementById('codeError');
+    errEl.style.visibility = 'visible';
+    errEl.textContent = '❌ الكود غير صحيح أو غير مفعل';
+    return;
+  }
+  // Check code matches stage/grade/subject
+  const stageMatch = codeObj.scStg === 'all' || codeObj.scStg === contentStage;
+  const gradeMatch = codeObj.scGr === 'all' || codeObj.scGr === contentGrade;
+  const subjMatch = codeObj.scSb === 'all' || codeObj.scSb === contentSubject;
+  if (!stageMatch) { showCodeError('❌ هذا الكود للمرحلة ' + codeObj.scStg + ' فقط'); return; }
+  if (!gradeMatch) { showCodeError('❌ هذا الكود للصف ' + codeObj.scGr + ' فقط'); return; }
+  if (!subjMatch) { showCodeError('❌ هذا الكود لمادة ' + codeObj.scSb + ' فقط'); return; }
+  const key = contentStage+'_'+contentGrade+'_'+contentSubject;
+  unlockedSubjects[key] = true;
+  document.getElementById('unlockBox').style.display = 'none';
+  document.getElementById('contentList').classList.remove('hidden');
+  loadContentList();
+  showNotif('✅ تم فتح المحتوى');
+}
+
+function showCodeError(msg) {
+  const errEl = document.getElementById('codeError');
+  errEl.style.visibility = 'visible';
+  errEl.textContent = msg;
+}
+
+function loadContentList() {
+  const db = getDB();
+  const items = db.contents.filter(c => c.stage === contentStage && c.grade === contentGrade && c.subject === contentSubject);
+  const list = document.getElementById('contentList');
+  if (!items.length) { list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray-500)">لا يوجد محتوى بعد</div>'; return; }
+  list.innerHTML = items.map(item => {
+    let icon = '📝', btnLabel = 'عرض', typeLabel = '';
+    if (item.type === 'video_yt' || item.type === 'video_file') { icon = '🎬'; btnLabel = '▶ مشاهدة'; typeLabel = 'فيديو'; }
+    else if (item.type === 'pdf') { icon = '📄'; btnLabel = '⬇ تحميل'; typeLabel = 'ملف'; }
+    else if (item.type === 'text') { icon = '📝'; typeLabel = 'نص'; }
+    return `<div class="content-item">
+      <div class="content-icon">${icon}</div>
+      <div class="content-info">
+        <h4>${escHtml(item.title)}</h4>
+        <p>${typeLabel} — ${new Date(item.ts).toLocaleDateString('ar')}</p>
+      </div>
+      <div class="content-actions">
+        <button class="btn btn-gold btn-sm" onclick="openContent('${item.id}')">${btnLabel}</button>
+        ${currentUser.role === 'admin' ? `<button class="btn btn-danger btn-sm" onclick="deleteContent('${item.id}')">🗑️</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openContent(id) {
+  const db = getDB();
+  const item = db.contents.find(c => c.id === id);
+  if (!item) return;
+  document.getElementById('videoModalTitle').textContent = item.title;
+  const contentDiv = document.getElementById('videoModalContent');
+  const textDiv = document.getElementById('videoModalText');
+  textDiv.innerHTML = '';
+  if (item.type === 'video_yt') {
+    let ytId = '';
+    const match = item.url.match(/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    if (match) ytId = match[1];
+    contentDiv.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}" frameborder="0" allowfullscreen style="width:100%;height:360px;border-radius:8px"></iframe>`;
+  } else if (item.type === 'video_file') {
+    contentDiv.innerHTML = `<video src="${item.blobUrl||''}" controls style="width:100%;border-radius:8px;max-height:360px"></video>`;
+  } else if (item.type === 'text') {
+    contentDiv.innerHTML = '';
+    textDiv.innerHTML = item.textContent || '';
+  } else if (item.type === 'pdf') {
+    contentDiv.innerHTML = `<a href="${item.fileData}" download="${item.title}" class="btn btn-gold">⬇ تحميل ${item.title}</a>`;
+  }
+  openModal('videoModal');
+}
+
+function navContent(view) {
+  document.getElementById('stagesView').classList.toggle('hidden', view !== 'stages');
+  document.getElementById('subjectsView').classList.toggle('hidden', view !== 'subjects');
+  document.getElementById('contentView').classList.toggle('hidden', view !== 'content');
+  // Breadcrumb
+  let bc = `<button onclick="navContent('stages')">المراحل</button>`;
+  if (view === 'subjects' || view === 'content') bc += `<span>›</span><button onclick="navContent('subjects')">${contentGrade}</button>`;
+  if (view === 'content') bc += `<span>›</span><span style="font-weight:700;color:var(--navy)">${contentSubject}</span>`;
+  document.getElementById('breadcrumb').innerHTML = bc;
+}
+
+// ============================================================
+// LIVE (FIX #3,4,5,9)
+// ============================================================
+function renderLivePage() {
+  const db = getDB();
+  const canLive = currentUser.role === 'admin' || (currentUser.perms && currentUser.perms.canLive);
+  const startBtn = document.getElementById('startLiveBtn');
+  if (canLive) {
+    startBtn.innerHTML = `<button class="btn btn-danger" onclick="openBroadcast()">🔴 بدء بث جديد</button>`;
+  } else {
+    startBtn.innerHTML = '';
+  }
+  document.getElementById('broadcastBox').classList.add('hidden');
+  document.getElementById('liveViewerBox').classList.add('hidden');
+  renderLiveGrid();
+}
+
+function renderLiveGrid() {
+  const db = getDB();
+  const grid = document.getElementById('liveGrid');
+  const activeLives = db.lives.filter(l => l.active);
+  if (!activeLives.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--gray-500)"><div style="font-size:48px">📡</div><p>لا يوجد بث مباشر الآن</p></div>';
+    return;
+  }
+  grid.innerHTML = activeLives.map(l => `
+    <div class="live-card">
+      <div class="live-thumb">
+        <div class="live-badge">🔴 مباشر</div>
+        <div style="color:rgba(255,255,255,0.5);font-size:48px">📡</div>
+      </div>
+      <div class="live-info">
+        <h4>${escHtml(l.title)}</h4>
+        <small>${l.grade || ''} — ${l.subject || ''}</small>
+        <br><small>بواسطة: ${l.hostName}</small>
+        <br>
+        <button class="btn btn-danger btn-sm" style="margin-top:8px" onclick="joinLive('${l.id}')">▶ مشاهدة</button>
+        ${(currentUser.role==='admin'||l.hostUs===currentUser.us)?`<button class="btn btn-outline btn-sm" style="margin-right:8px" onclick="endLiveById('${l.id}')">⏹ إنهاء</button>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function openBroadcast() {
+  if (AGORA_APP_ID === 'YOUR_AGORA_APP_ID') {
+    showNotif('❌ يجب إضافة Agora App ID في الكود أولاً', 'error');
+    return;
+  }
+  var perms = currentUser.perms || {};
+  var canLive = currentUser.role === 'admin' || perms.canLive;
+  if (!canLive) { showNotif('⛔ لا تملك صلاحية البث', 'error'); return; }
+  var gradeOptions = '', subjectOptions = '';
+  if (currentUser.role !== 'admin') {
+    (perms.allowedLiveGrades || []).forEach(function(g){ gradeOptions += '<option value="'+g+'">'+g+'</option>'; });
+    (perms.allowedLiveSubjects || []).forEach(function(s){ subjectOptions += '<option value="'+s+'">'+s+'</option>'; });
+  } else {
+    Object.values(GRADES).flat().forEach(function(g){ gradeOptions += '<option value="'+g+'">'+g+'</option>'; });
+    SUBJECTS.forEach(function(s){ subjectOptions += '<option value="'+s+'">'+s+'</option>'; });
+  }
+  document.getElementById('liveGrid').innerHTML = '<div style="grid-column:1/-1;background:var(--white);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow)">'
+    + '<h3 style="color:var(--navy);margin-bottom:16px">🔴 إعداد البث المباشر</h3>'
+    + '<div class="form-group"><label>عنوان البث</label><input type="text" id="liveTitle" placeholder="موضوع الدرس"></div>'
+    + '<div class="form-group"><label>الصف</label><select id="liveGradeSelect"><option value="">اختر الصف</option>' + gradeOptions + '</select></div>'
+    + '<div class="form-group"><label>المادة</label><select id="liveSubjectSelect"><option value="">اختر المادة</option>' + subjectOptions + '</select></div>'
+    + '<div style="display:flex;gap:10px;margin-top:16px">'
+    + '<button class="btn btn-danger" onclick="initBroadcast()">📷 فتح الكاميرا والميك</button>'
+    + '<button class="btn btn-outline" onclick="renderLivePage()">إلغاء</button>'
+    + '</div></div>';
+  document.getElementById('broadcastBox').classList.add('hidden');
+}
+
+async function initBroadcast() {
+  var titleEl   = document.getElementById('liveTitle');
+  var gradeEl   = document.getElementById('liveGradeSelect');
+  var subjectEl = document.getElementById('liveSubjectSelect');
+  var title     = titleEl   ? titleEl.value.trim()   : 'بث مباشر';
+  var grade     = gradeEl   ? gradeEl.value           : '';
+  var subject   = subjectEl ? subjectEl.value         : '';
+  if (!title) title = 'بث مباشر';
+
+  document.getElementById('broadcastBox').classList.remove('hidden');
+  document.getElementById('liveGrid').innerHTML = '';
+  document.getElementById('broadcastStatus').textContent = '⏳ جاري فتح الكاميرا...';
+  document.getElementById('startStreamBtn').classList.add('hidden');
+  document.getElementById('stopStreamBtn').classList.add('hidden');
+  try {
+    var tracks = await AgoraRTC.createMicrophoneAndCameraTracks();
+    agoraLocalAudioTrack = tracks[0];
+    agoraLocalVideoTrack = tracks[1];
+    var previewDiv = document.getElementById('broadcastPreview');
+    previewDiv.style.transform = '';
+    agoraLocalVideoTrack.play(previewDiv);
+    var box = document.getElementById('broadcastBox');
+    box.dataset.title   = title;
+    box.dataset.grade   = grade;
+    box.dataset.subject = subject;
+    document.getElementById('broadcastStatus').textContent = '📷 الكاميرا جاهزة — اضغط بدء البث';
+    document.getElementById('startStreamBtn').classList.remove('hidden');
+    showNotif('✅ الكاميرا والميك جاهزان');
+  } catch(e) {
+    document.getElementById('broadcastBox').classList.add('hidden');
+    showNotif('❌ تعذر فتح الكاميرا: ' + e.message, 'error');
+    renderLiveGrid();
+  }
+}
+
+async function startStream() {
+  var box     = document.getElementById('broadcastBox');
+  var title   = box.dataset.title   || 'بث مباشر';
+  var grade   = box.dataset.grade   || '';
+  var subject = box.dataset.subject || '';
+  currentLiveId = 'live_' + Date.now();
+  document.getElementById('broadcastStatus').textContent = '⏳ جاري الاتصال...';
+  document.getElementById('startStreamBtn').classList.add('hidden');
+  try {
+    agoraClient = AgoraRTC.createClient({ mode: 'live', codec: 'vp8' });
+    await agoraClient.setClientRole('host');
+    await agoraClient.join(AGORA_APP_ID, currentLiveId, AGORA_TOKEN, null);
+    await agoraClient.publish([agoraLocalAudioTrack, agoraLocalVideoTrack]);
+    isHosting = true;
+    var db = getDB();
+    db.lives.push({ id: currentLiveId, channel: currentLiveId, active: true, title: title, grade: grade, subject: subject, hostUs: currentUser.us, hostName: currentUser.name || currentUser.us, ts: Date.now() });
+    saveDB(db);
+    broadcastUpdate('lives');
+    document.getElementById('broadcastStatus').textContent = '🔴 البث مباشر الآن';
+    document.getElementById('stopStreamBtn').classList.remove('hidden');
+    showNotif('🔴 بدأ البث — يمكن للطلاب الانضمام الآن');
+  } catch(e) {
+    document.getElementById('startStreamBtn').classList.remove('hidden');
+    document.getElementById('broadcastStatus').textContent = '❌ فشل الاتصال';
+    showNotif('❌ فشل بدء البث: ' + e.message, 'error');
+  }
+}
+
+async function _endStream() {
+  try {
+    if (agoraLocalAudioTrack) { agoraLocalAudioTrack.stop(); agoraLocalAudioTrack.close(); agoraLocalAudioTrack = null; }
+    if (agoraLocalVideoTrack) { agoraLocalVideoTrack.stop(); agoraLocalVideoTrack.close(); agoraLocalVideoTrack = null; }
+    if (agoraClient) { await agoraClient.leave(); agoraClient = null; }
+  } catch(e) { console.error('_endStream:', e); }
+}
+
+async function stopStream() {
+  await _endStream();
+  var db = getDB();
+  db.lives.forEach(function(l){ if (l.id === currentLiveId) l.active = false; });
+  saveDB(db);
+  broadcastUpdate('lives');
+  isHosting = false;
+  currentLiveId = null;
+  document.getElementById('broadcastBox').classList.add('hidden');
+  document.getElementById('stopStreamBtn').classList.add('hidden');
+  document.getElementById('startStreamBtn').classList.remove('hidden');
+  document.getElementById('broadcastStatus').textContent = '📷 جاهز للبث';
+  renderLiveGrid();
+  showNotif('⏹ انتهى البث');
+}
+
+async function endLiveById(liveId) {
+  if (!confirm('إنهاء هذا البث نهائياً؟')) return;
+  var db = getDB();
+  var live = db.lives.find(function(l){ return l.id === liveId; });
+  if (!live) return;
+  live.active = false;
+  if (live.hostUs === currentUser.us && isHosting) {
+    await _endStream();
+    isHosting = false;
+    currentLiveId = null;
+    document.getElementById('broadcastBox').classList.add('hidden');
+  }
+  saveDB(db);
+  broadcastUpdate('lives');
+  renderLiveGrid();
+  showNotif('⏹ تم إنهاء البث');
+}
+
+async function joinLive(liveId) {
+  var db   = getDB();
+  var live = db.lives.find(function(l){ return l.id === liveId && l.active; });
+  if (!live) { showNotif('❌ انتهى هذا البث', 'error'); renderLivePage(); return; }
+  document.getElementById('liveGrid').classList.add('hidden');
+  var viewerBox = document.getElementById('liveViewerBox');
+  viewerBox.classList.remove('hidden');
+  viewerBox.dataset.liveId = liveId;
+  document.getElementById('viewerStreamTitle').textContent = live.title + ' — ' + (live.grade||'') + ' ' + (live.subject||'');
+  var remoteDiv = document.getElementById('viewerVideo');
+  remoteDiv.style.background = '#000';
+  try {
+    agoraClient = AgoraRTC.createClient({ mode: 'live', codec: 'vp8' });
+    await agoraClient.setClientRole('audience');
+    await agoraClient.join(AGORA_APP_ID, live.channel || liveId, AGORA_TOKEN, null);
+    agoraClient.on('user-published', async function(user, mediaType) {
+      await agoraClient.subscribe(user, mediaType);
+      if (mediaType === 'video') { user.videoTrack.play(remoteDiv); }
+      if (mediaType === 'audio') { user.audioTrack.play(); }
+    });
+    agoraClient.on('user-left', function() {
+      showNotif('📡 انتهى البث');
+    });
+    showNotif('📺 انضممت للبث بنجاح');
+  } catch(e) {
+    viewerBox.classList.add('hidden');
+    document.getElementById('liveGrid').classList.remove('hidden');
+    showNotif('❌ فشل الانضمام: ' + e.message, 'error');
+    renderLiveGrid();
+  }
+}
+
+async function leaveLive() {
+  try { if (agoraClient) { await agoraClient.leave(); agoraClient = null; } } catch(e) {}
+  document.getElementById('liveViewerBox').classList.add('hidden');
+  document.getElementById('liveGrid').classList.remove('hidden');
+  renderLiveGrid();
+}
+
+function startLivePolling() {
+  clearInterval(livePollingInterval);
+  livePollingInterval = setInterval(async function() {
+    var viewerBox = document.getElementById('liveViewerBox');
+    if (!viewerBox || viewerBox.classList.contains('hidden')) return;
+    var liveId = viewerBox.dataset.liveId;
+    var db = getDB();
+    var live = db.lives.find(function(l){ return l.id === liveId; });
+    if (!live || !live.active) {
+      try { if (agoraClient) { await agoraClient.leave(); agoraClient = null; } } catch(e) {}
+      viewerBox.classList.add('hidden');
+      document.getElementById('liveGrid').classList.remove('hidden');
+      renderLiveGrid();
+      showNotif('📡 انتهى البث المباشر');
+    }
+  }, 3000);
+}
+
+
+// Admin live section — reuses same Agora pipeline via openBroadcast
+function adminStartStream() { goPage('live'); openBroadcast(); }
+function adminGoLive()      { startStream(); }
+async function adminStopStream() { await stopStream(); }
+
+// ============================================================
+// CHAT (FIX #7: BroadcastChannel + storage event)
+// ============================================================
+function setupBroadcastChannel() {
+  try {
+    if (broadcastChannel) broadcastChannel.close();
+    broadcastChannel = new BroadcastChannel('fullmark_sync');
+    broadcastChannel.onmessage = e => {
+      const { type } = e.data;
+      handleUpdate(type);
+    };
+  } catch(e) {}
+}
+
+function setupStorageListener() {
+  window.addEventListener('storage', e => {
+    if (e.key === DB_KEY) {
+      const activePage = document.querySelector('.page.active');
+      if (!activePage) return;
+      const id = activePage.id;
+      if (id === 'chatPage') renderChat();
+      else if (id === 'homePage') { renderPosts(); renderStories(); }
+      else if (id === 'livePage') renderLiveGrid();
+    }
+  });
+}
+
+function broadcastUpdate(type) {
+  try { if (broadcastChannel) broadcastChannel.postMessage({ type }); } catch(e) {}
+}
+
+function handleUpdate(type) {
+  const activePage = document.querySelector('.page.active');
+  if (!activePage) return;
+  const id = activePage.id;
+  if (type === 'chat' && id === 'chatPage') renderChat();
+  if (type === 'posts' && id === 'homePage') { renderPosts(); renderStories(); }
+  if (type === 'stories' && id === 'homePage') renderStories();
+  if (type === 'lives') renderLiveGrid();
+}
+
+function renderChat() {
+  const db = getDB();
+  const container = document.getElementById('chatMessages');
+  const blocked = db.chatBlocked || [];
+  const isAdmin = currentUser.role === 'admin';
+
+  // Show blocked users panel for admin
+  const blockedBar = document.getElementById('chatBlockedBar');
+  if (blockedBar) {
+    if (isAdmin && blocked.length > 0) {
+      blockedBar.innerHTML = '<strong style="font-size:12px;color:var(--danger)">🚫 محظورون من الشات:</strong> ' +
+        blocked.map(us => {
+          const a = db.accounts.find(x => x.us === us);
+          return `<span style="background:#f8d7da;padding:2px 8px;border-radius:10px;font-size:12px;margin:2px;display:inline-flex;align-items:center;gap:4px;">
+            ${escHtml(a ? a.name : us)}
+            <button onclick="unblockFromChat('${us}')" style="background:none;border:none;cursor:pointer;color:var(--danger);font-size:14px;line-height:1;">×</button>
+          </span>`;
+        }).join('') ;
+      blockedBar.style.display = 'block';
+    } else {
+      blockedBar.style.display = 'none';
+    }
+  }
+
+  if (!db.chatMsgs.length) {
+    container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--gray-500)">لا توجد رسائل بعد</div>';
+    return;
+  }
+  container.innerHTML = db.chatMsgs.map(m => {
+    const mine = m.us === currentUser.us;
+    const acc = db.accounts.find(a => a.us === m.us);
+    const name = acc ? acc.name : m.us;
+    const isBlocked = blocked.includes(m.us);
+    // Admin controls per message
+    let adminControls = '';
+    if (isAdmin && !mine) {
+      const blockLabel = isBlocked ? '✅ رفع الحظر' : '🚫 حظر';
+      const blockFn = isBlocked ? `unblockFromChat('${m.us}')` : `blockFromChat('${m.us}')`;
+      adminControls = `<div style="display:flex;gap:4px;margin-top:4px;">
+        <button onclick="deleteChatMsg(${m.id})" style="background:rgba(220,53,69,0.15);border:none;border-radius:8px;padding:2px 8px;font-size:11px;cursor:pointer;color:var(--danger);font-family:inherit;">🗑️ حذف</button>
+        <button onclick="${blockFn}" style="background:rgba(13,33,85,0.1);border:none;border-radius:8px;padding:2px 8px;font-size:11px;cursor:pointer;color:var(--navy);font-family:inherit;">${blockLabel}</button>
+      </div>`;
+    }
+    return `<div style="margin-bottom:4px;">
+      ${!mine ? `<div class="msg-name">${escHtml(name)}${isBlocked && isAdmin ? ' <span style="color:var(--danger);font-size:10px;">🚫محظور</span>' : ''}</div>` : ''}
+      <div class="msg-bubble ${mine?'mine':'theirs'}">${escHtml(m.text)}<div class="msg-time">${new Date(m.ts).toLocaleTimeString('ar')}</div></div>
+      ${adminControls}
+    </div>`;
+  }).join('');
+  container.scrollTop = container.scrollHeight;
+}
+
+function deleteChatMsg(msgId) {
+  const db = getDB();
+  db.chatMsgs = db.chatMsgs.filter(m => m.id != msgId);
+  saveDB(db);
+  broadcastUpdate('chat');
+  renderChat();
+  showNotif('🗑️ تم حذف الرسالة');
+}
+
+function blockFromChat(us) {
+  const db = getDB();
+  if (!db.chatBlocked) db.chatBlocked = [];
+  if (!db.chatBlocked.includes(us)) db.chatBlocked.push(us);
+  saveDB(db);
+  broadcastUpdate('chat');
+  renderChat();
+  const acc = db.accounts.find(a => a.us === us);
+  showNotif('🚫 تم حظر ' + (acc ? acc.name : us) + ' من الشات');
+}
+
+function unblockFromChat(us) {
+  const db = getDB();
+  if (!db.chatBlocked) db.chatBlocked = [];
+  db.chatBlocked = db.chatBlocked.filter(u => u !== us);
+  saveDB(db);
+  broadcastUpdate('chat');
+  renderChat();
+  const acc = db.accounts.find(a => a.us === us);
+  showNotif('✅ تم رفع حظر ' + (acc ? acc.name : us) + ' من الشات');
+}
+
+function sendChat() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  const db = getDB();
+  const blocked = db.chatBlocked || [];
+  if (blocked.includes(currentUser.us)) {
+    showNotif('🚫 أنت محظور من الشات', 'error');
+    input.value = '';
+    return;
+  }
+  db.chatMsgs.push({ id: Date.now(), us: currentUser.us, text, ts: Date.now() });
+  if (db.chatMsgs.length > 200) db.chatMsgs = db.chatMsgs.slice(-200);
+  saveDB(db);
+  input.value = '';
+  broadcastUpdate('chat');
+  renderChat();
+}
+
+// ============================================================
+// PROFILE (FIX #13: avatar upload)
+// ============================================================
+function renderProfile() {
+  const db = getDB();
+  const acc = db.accounts.find(a => a.us === currentUser.us);
+  const name = acc ? (acc.name || acc.us) : currentUser.us;
+  const initials = name.charAt(0).toUpperCase();
+  const bigDiv = document.getElementById('bigAvatarDiv');
+  if (acc && acc.avatarImg) {
+    bigDiv.innerHTML = `<img src="${acc.avatarImg}" alt="avatar"><div class="avatar-edit">✏️</div>`;
+  } else {
+    bigDiv.innerHTML = `<span id="bigAvatarText">${initials}</span><div class="avatar-edit">✏️</div>`;
+  }
+  document.getElementById('profileName').textContent = name;
+  document.getElementById('profileUsername').textContent = '@' + (acc ? acc.us : currentUser.us);
+  document.getElementById('profilePhone').textContent = acc && acc.phone ? '📱 ' + acc.phone : '';
+  const tags = document.getElementById('profileTags');
+  tags.innerHTML = '';
+  if (acc && acc.grd) tags.innerHTML += `<span class="tag">${acc.grd}</span>`;
+  if (acc && acc.sbjs) acc.sbjs.forEach(s => tags.innerHTML += `<span class="tag">${s}</span>`);
+  // Permissions
+  const permsDiv = document.getElementById('profilePermsDiv');
+  if (acc && acc.perms) {
+    let html = '';
+    if (acc.perms.canUpload) html += `<span class="permissions-badge">📤 رفع محتوى</span>`;
+    if (acc.perms.canLive) html += `<span class="permissions-badge">📡 بث مباشر</span>`;
+    if (acc.perms.allowedGrades && acc.perms.allowedGrades.length) html += `<span class="permissions-badge">📚 ${acc.perms.allowedGrades.join('، ')}</span>`;
+    permsDiv.innerHTML = html;
+  }
+  // Stats
+  const myPosts = db.posts.filter(p => p.us === currentUser.us).length;
+  document.getElementById('statPosts').textContent = myPosts;
+  document.getElementById('statLogins').textContent = acc ? (acc.loginCount || 0) : 0;
+}
+
+function triggerAvatarUpload() {
+  document.getElementById('avatarFileInput').click();
+}
+
+function uploadAvatar(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const data = e.target.result;
+    const db = getDB();
+    const acc = db.accounts.find(a => a.us === currentUser.us);
+    if (acc) { acc.avatarImg = data; saveDB(db); }
+    currentUser.avatarImg = data;
+    sessionStorage.setItem('fm_session', JSON.stringify(currentUser));
+    updateTopBar();
+    renderProfile();
+    broadcastUpdate('posts');
+    showNotif('✅ تم تحديث الصورة');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ============================================================
+// ADMIN
+// ============================================================
+function renderAdminStats() {
+  const db = getDB();
+  const stats = { students: db.accounts.filter(a=>a.role!=='admin').length, contents: db.contents.length, codes: db.codes.filter(c=>c.on).length, posts: db.posts.length };
+  ['Students','Contents','Codes','PostsAdmin'].forEach(k => {
+    const el = document.getElementById('stat'+k);
+    if (el) el.textContent = stats[k.toLowerCase().replace('postsadmin','posts')] ?? stats['posts'];
+  });
+  document.getElementById('statStudents').textContent = stats.students;
+  document.getElementById('statContents').textContent = stats.contents;
+  document.getElementById('statCodes').textContent = stats.codes;
+  document.getElementById('statPostsAdmin').textContent = stats.posts;
+}
+
+function initAdminPage() {
+  const isAdmin = currentUser.role === 'admin';
+  // Show/hide admin-only tabs
+  document.querySelectorAll('.admin-only').forEach(el => {
+    el.style.display = isAdmin ? '' : 'none';
+  });
+  // Reset all tabs active state
+  document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+  // For permitted students: start on content tab
+  if (!isAdmin) {
+    document.getElementById('adminTabContent').classList.add('active');
+    document.getElementById('adminContent').classList.add('active');
+    renderContentAdmin();
+  } else {
+    document.querySelector('.admin-tab.admin-only').classList.add('active');
+    document.getElementById('adminStats').classList.add('active');
+    renderAdminStats(); renderStudentsTable(); renderContentAdmin(); renderCodesAdmin(); renderLog();
+  }
+}
+
+function switchAdminTab(tab) {
+  document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('admin'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active');
+  if (tab === 'stats') renderAdminStats();
+  else if (tab === 'students') renderStudentsTable();
+  else if (tab === 'content') renderContentAdmin();
+  else if (tab === 'codes') renderCodesAdmin();
+  else if (tab === 'log') renderLog();
+}
+
+function renderStudentsTable() {
+  const db = getDB();
+  const students = db.accounts.filter(a => a.role !== 'admin');
+  const tbody = document.getElementById('studentsBody');
+  if (!students.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gray-500)">لا يوجد طلاب بعد</td></tr>'; return; }
+  tbody.innerHTML = students.map(s => `
+    <tr>
+      <td><strong>${escHtml(s.name||'—')}</strong></td>
+      <td>${escHtml(s.us)}</td>
+      <td>${escHtml(s.grd||'—')}</td>
+      <td>${s.phone ? `<a href="https://wa.me/2${s.phone}" target="_blank">📱 ${s.phone}</a>` : '—'}</td>
+      <td><span class="badge ${s.banned?'badge-danger':'badge-success'}">${s.banned?'محظور':'نشط'}</span></td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-xs btn-info" onclick="openEditPerm('${s.us}')">🔐 صلاحيات</button>
+        <button class="btn btn-xs ${s.banned?'btn-success':'btn-danger'}" onclick="toggleBan('${s.us}')">${s.banned?'رفع حظر':'حظر'}</button>
+        <button class="btn btn-xs btn-outline" onclick="openResetPass('${s.us}')">🔄 كلمة مرور</button>
+        <button class="btn btn-xs btn-danger" onclick="deleteStudent('${s.us}')">🗑️</button>
+        ${s.phone?`<button class="btn btn-xs btn-success" onclick="openSendWa('${s.us}')">📲</button>`:''}
+      </td>
+    </tr>`).join('');
+}
+
+function openCreateStudentModal() {
+  document.getElementById('newStudentName').value = '';
+  document.getElementById('newStudentUser').value = '';
+  document.getElementById('newStudentPass').value = '';
+  document.getElementById('permCanUpload').checked = false;
+  document.getElementById('permCanLive').checked = false;
+  document.getElementById('uploadPermDetail').classList.add('hidden');
+  document.getElementById('livePermDetail').classList.add('hidden');
+  openModal('createStudentModal');
+}
+
+function togglePermUI() {
+  document.getElementById('uploadPermDetail').classList.toggle('hidden', !document.getElementById('permCanUpload').checked);
+  document.getElementById('livePermDetail').classList.toggle('hidden', !document.getElementById('permCanLive').checked);
+}
+
+function updatePermGrades(type) {
+  const stageEl = document.getElementById(type==='upload'?'permUploadStage':'permLiveStage');
+  const stage = stageEl.value;
+  const gradesEl = document.getElementById(type==='upload'?'permUploadGrades':'permLiveGrades');
+  const subjectsEl = document.getElementById(type==='upload'?'permUploadSubjects':'permLiveSubjects');
+  if (!stage) { gradesEl.innerHTML = ''; subjectsEl.innerHTML = ''; return; }
+  const grades = GRADES[stage] || [];
+  gradesEl.innerHTML = grades.map(g => `<label class="checkbox-item"><input type="checkbox" value="${g}" class="perm-grade-${type}"> ${g}</label>`).join('');
+  subjectsEl.innerHTML = SUBJECTS.map(s => `<label class="checkbox-item"><input type="checkbox" value="${s}" class="perm-subj-${type}"> ${s}</label>`).join('');
+}
+
+function createStudent() {
+  const name = document.getElementById('newStudentName').value.trim();
+  const us = document.getElementById('newStudentUser').value.trim();
+  const pw = document.getElementById('newStudentPass').value.trim();
+  if (!name || !us || !pw) { showNotif('❌ أكمل جميع البيانات', 'error'); return; }
+  const db = getDB();
+  if (db.accounts.find(a => a.us === us)) { showNotif('❌ اسم المستخدم موجود مسبقاً', 'error'); return; }
+  // FIX #2,3: Gather granular permissions
+  const canUpload = document.getElementById('permCanUpload').checked;
+  const canLive = document.getElementById('permCanLive').checked;
+  const allowedGrades = canUpload ? [...document.querySelectorAll('.perm-grade-upload:checked')].map(c=>c.value) : [];
+  const allowedSubjects = canUpload ? [...document.querySelectorAll('.perm-subj-upload:checked')].map(c=>c.value) : [];
+  const allowedLiveGrades = canLive ? [...document.querySelectorAll('.perm-grade-live:checked')].map(c=>c.value) : [];
+  const allowedLiveSubjects = canLive ? [...document.querySelectorAll('.perm-subj-live:checked')].map(c=>c.value) : [];
+  const acc = {
+    us, pw, role:'student', name, phone:'', stg:'', grd:'', sbjs:[], profileDone:false, avatarImg:'',
+    perms:{ canUpload, canLive, allowedGrades, allowedSubjects, allowedLiveGrades, allowedLiveSubjects },
+    banned:false, loginCount:0, lastLogin:''
+  };
+  db.accounts.push(acc);
+  saveDB(db);
+  closeModal('createStudentModal');
+  renderStudentsTable();
+  renderAdminStats();
+  showNotif(`✅ تم إنشاء حساب ${name}`);
+}
+
+function toggleBan(us) {
+  const db = getDB();
+  const acc = db.accounts.find(a => a.us === us);
+  if (!acc) return;
+  acc.banned = !acc.banned;
+  saveDB(db);
+  renderStudentsTable();
+  showNotif(acc.banned ? '⛔ تم حظر الطالب' : '✅ تم رفع الحظر');
+}
+
+function deleteStudent(us) {
+  if (!confirm('حذف هذا الطالب نهائياً؟')) return;
+  const db = getDB();
+  db.accounts = db.accounts.filter(a => a.us !== us);
+  saveDB(db);
+  renderStudentsTable();
+  renderAdminStats();
+  showNotif('🗑️ تم حذف الطالب');
+}
+
+function openResetPass(us) {
+  document.getElementById('resetPassUser').value = us;
+  document.getElementById('newPassInput').value = '';
+  openModal('resetPassModal');
+}
+
+function doResetPass() {
+  const us = document.getElementById('resetPassUser').value;
+  const pw = document.getElementById('newPassInput').value.trim();
+  if (!pw) { showNotif('❌ أدخل كلمة مرور', 'error'); return; }
+  const db = getDB();
+  const acc = db.accounts.find(a => a.us === us);
+  if (acc) { acc.pw = pw; saveDB(db); }
+  closeModal('resetPassModal');
+  showNotif(`✅ تم ريست كلمة مرور ${us}`);
+}
+
+// FIX #2,3: Edit permissions
+function openEditPerm(us) {
+  editPermUsername = us;
+  const db = getDB();
+  const acc = db.accounts.find(a => a.us === us);
+  if (!acc) return;
+  document.getElementById('editPermName').textContent = acc.name || us;
+  const perms = acc.perms || {};
+  document.getElementById('editPermCanUpload').checked = !!perms.canUpload;
+  document.getElementById('editPermCanLive').checked = !!perms.canLive;
+  document.getElementById('editUploadPermDetail').classList.toggle('hidden', !perms.canUpload);
+  document.getElementById('editLivePermDetail').classList.toggle('hidden', !perms.canLive);
+  openModal('editPermModal');
+  // Pre-populate if upload perm
+  if (perms.canUpload && perms.allowedGrades && perms.allowedGrades.length) {
+    const stage = getStageFromGrade(perms.allowedGrades[0]);
+    if (stage) {
+      document.getElementById('editPermUploadStage').value = stage;
+      updateEditPermGrades('upload');
+      setTimeout(() => {
+        perms.allowedGrades.forEach(g => {
+          const cb = document.querySelector(`.edit-perm-grade-upload[value="${g}"]`);
+          if (cb) cb.checked = true;
+        });
+        perms.allowedSubjects && perms.allowedSubjects.forEach(s => {
+          const cb = document.querySelector(`.edit-perm-subj-upload[value="${s}"]`);
+          if (cb) cb.checked = true;
+        });
+      }, 50);
+    }
+  }
+  if (perms.canLive && perms.allowedLiveGrades && perms.allowedLiveGrades.length) {
+    const stage = getStageFromGrade(perms.allowedLiveGrades[0]);
+    if (stage) {
+      document.getElementById('editPermLiveStage').value = stage;
+      updateEditPermGrades('live');
+      setTimeout(() => {
+        perms.allowedLiveGrades.forEach(g => {
+          const cb = document.querySelector(`.edit-perm-grade-live[value="${g}"]`);
+          if (cb) cb.checked = true;
+        });
+        perms.allowedLiveSubjects && perms.allowedLiveSubjects.forEach(s => {
+          const cb = document.querySelector(`.edit-perm-subj-live[value="${s}"]`);
+          if (cb) cb.checked = true;
+        });
+      }, 50);
+    }
+  }
+}
+
+function getStageFromGrade(grade) {
+  for (const [stage, grades] of Object.entries(GRADES)) {
+    if (grades.includes(grade)) return stage;
+  }
+  return null;
+}
+
+function toggleEditPermUI() {
+  document.getElementById('editUploadPermDetail').classList.toggle('hidden', !document.getElementById('editPermCanUpload').checked);
+  document.getElementById('editLivePermDetail').classList.toggle('hidden', !document.getElementById('editPermCanLive').checked);
+}
+
+function updateEditPermGrades(type) {
+  const stageEl = document.getElementById(type==='upload'?'editPermUploadStage':'editPermLiveStage');
+  const stage = stageEl.value;
+  const gradesEl = document.getElementById(type==='upload'?'editPermUploadGrades':'editPermLiveGrades');
+  const subjectsEl = document.getElementById(type==='upload'?'editPermUploadSubjects':'editPermLiveSubjects');
+  if (!stage) { gradesEl.innerHTML = ''; subjectsEl.innerHTML = ''; return; }
+  const grades = GRADES[stage] || [];
+  gradesEl.innerHTML = grades.map(g => `<label class="checkbox-item"><input type="checkbox" value="${g}" class="edit-perm-grade-${type}"> ${g}</label>`).join('');
+  subjectsEl.innerHTML = SUBJECTS.map(s => `<label class="checkbox-item"><input type="checkbox" value="${s}" class="edit-perm-subj-${type}"> ${s}</label>`).join('');
+}
+
+function saveEditPerms() {
+  const db = getDB();
+  const acc = db.accounts.find(a => a.us === editPermUsername);
+  if (!acc) return;
+  const canUpload = document.getElementById('editPermCanUpload').checked;
+  const canLive = document.getElementById('editPermCanLive').checked;
+  acc.perms = {
+    canUpload,
+    canLive,
+    allowedGrades: canUpload ? [...document.querySelectorAll('.edit-perm-grade-upload:checked')].map(c=>c.value) : [],
+    allowedSubjects: canUpload ? [...document.querySelectorAll('.edit-perm-subj-upload:checked')].map(c=>c.value) : [],
+    allowedLiveGrades: canLive ? [...document.querySelectorAll('.edit-perm-grade-live:checked')].map(c=>c.value) : [],
+    allowedLiveSubjects: canLive ? [...document.querySelectorAll('.edit-perm-subj-live:checked')].map(c=>c.value) : []
+  };
+  saveDB(db);
+  closeModal('editPermModal');
+  renderStudentsTable();
+  showNotif('✅ تم حفظ الصلاحيات');
+}
+
+// Content Admin
+function openUploadModal() {
+  document.getElementById('uploadTitle').value = '';
+  document.getElementById('uploadType').value = 'video_yt';
+  document.getElementById('ytUrl').value = '';
+  document.getElementById('uploadStage').value = '';
+  document.getElementById('uploadGrade').innerHTML = '<option value="">اختر الصف</option>';
+  document.getElementById('uploadSubject').innerHTML = '<option value="">اختر المادة</option>';
+  updateUploadTypeUI();
+  openModal('uploadModal');
+}
+
+function updateUploadTypeUI() {
+  const type = document.getElementById('uploadType').value;
+  document.getElementById('ytUrlGroup').classList.toggle('hidden', type !== 'video_yt');
+  document.getElementById('videoFileGroup').classList.toggle('hidden', type !== 'video_file');
+  document.getElementById('textContentGroup').classList.toggle('hidden', type !== 'text');
+  document.getElementById('pdfFileGroup').classList.toggle('hidden', type !== 'pdf');
+}
+
+function updateUploadGrades() {
+  const stage = document.getElementById('uploadStage').value;
+  const gradeEl = document.getElementById('uploadGrade');
+  const subjEl = document.getElementById('uploadSubject');
+  gradeEl.innerHTML = '<option value="">اختر الصف</option>';
+  subjEl.innerHTML = '<option value="">اختر المادة</option>';
+  if (!stage) return;
+  GRADES[stage].forEach(g => gradeEl.innerHTML += `<option value="${g}">${g}</option>`);
+  SUBJECTS.forEach(s => subjEl.innerHTML += `<option value="${s}">${s}</option>`);
+}
+
+function handleVideoFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  document.getElementById('videoFileName').textContent = file.name + ' (' + (file.size/1024/1024).toFixed(1) + ' MB)';
+  const progress = document.getElementById('videoUploadProgress');
+  let p = 0;
+  const interval = setInterval(() => {
+    p += 10; progress.style.width = p + '%';
+    if (p >= 100) { clearInterval(interval); tempVideoBlob = URL.createObjectURL(file); }
+  }, 100);
+}
+
+function handleVideoDrop(e) {
+  e.preventDefault(); e.currentTarget.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('video/')) {
+    const dt = new DataTransfer(); dt.items.add(file);
+    document.getElementById('videoFileInput').files = dt.files;
+    handleVideoFile(document.getElementById('videoFileInput'));
+  }
+}
+
+function saveUpload() {
+  const title = document.getElementById('uploadTitle').value.trim();
+  const type = document.getElementById('uploadType').value;
+  const stage = document.getElementById('uploadStage').value;
+  const grade = document.getElementById('uploadGrade').value;
+  const subject = document.getElementById('uploadSubject').value;
+  if (!title || !stage || !grade || !subject) { showNotif('❌ أكمل جميع البيانات', 'error'); return; }
+  const db = getDB();
+  const item = { id: 'c'+Date.now(), title, type, stage, grade, subject, ts: Date.now(), uploadedBy: currentUser.us };
+  if (type === 'video_yt') item.url = document.getElementById('ytUrl').value.trim();
+  else if (type === 'video_file') item.blobUrl = tempVideoBlob || '';
+  else if (type === 'text') item.textContent = document.getElementById('textContent').value;
+  else if (type === 'pdf') {
+    const file = document.getElementById('pdfFileInput').files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = e => { item.fileData = e.target.result; db.contents.push(item); saveDB(db); closeModal('uploadModal'); renderContentAdmin(); renderAdminStats(); showNotif('✅ تم رفع الملف'); };
+      reader.readAsDataURL(file);
+      return;
+    }
+  }
+  db.contents.push(item);
+  saveDB(db);
+  closeModal('uploadModal');
+  renderContentAdmin();
+  renderAdminStats();
+  showNotif('✅ تم رفع المحتوى');
+}
+
+function renderContentAdmin() {
+  const db = getDB();
+  const container = document.getElementById('adminContentList');
+  if (!db.contents.length) { container.innerHTML = '<p class="text-gray text-center">لا يوجد محتوى</p>'; return; }
+  container.innerHTML = db.contents.map(c => `
+    <div style="background:var(--white);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px;border:1px solid var(--gray-200);display:flex;align-items:center;gap:12px">
+      <div style="font-size:24px">${c.type==='video_yt'||c.type==='video_file'?'🎬':c.type==='pdf'?'📄':'📝'}</div>
+      <div style="flex:1">
+        <strong>${escHtml(c.title)}</strong>
+        <div style="font-size:12px;color:var(--gray-500)">${c.grade} — ${c.subject} — ${new Date(c.ts).toLocaleDateString('ar')}</div>
+      </div>
+      <button class="btn btn-danger btn-xs" onclick="deleteContent('${c.id}')">🗑️</button>
+    </div>`).join('');
+}
+
+function deleteContent(id) {
+  if (!confirm('حذف هذا المحتوى؟')) return;
+  const db = getDB();
+  db.contents = db.contents.filter(c => c.id !== id);
+  saveDB(db);
+  renderContentAdmin();
+  renderAdminStats();
+  if (document.getElementById('contentPage').classList.contains('active')) loadContentList();
+  showNotif('🗑️ تم حذف المحتوى');
+}
+
+// Codes
+function openCreateCodeModal() {
+  document.getElementById('newCodeVal').value = 'FM' + Math.random().toString(36).substr(2,6).toUpperCase();
+  document.getElementById('newCodeLabel').value = '';
+  document.getElementById('newCodeStage').value = 'all';
+  document.getElementById('newCodeGrade').innerHTML = '<option value="all">جميع الصفوف</option>';
+  document.getElementById('newCodeSubject').value = 'all';
+  openModal('createCodeModal');
+}
+
+function updateCodeGrades() {
+  const stage = document.getElementById('newCodeStage').value;
+  const gradeEl = document.getElementById('newCodeGrade');
+  gradeEl.innerHTML = '<option value="all">جميع الصفوف</option>';
+  if (stage !== 'all') GRADES[stage].forEach(g => gradeEl.innerHTML += `<option value="${g}">${g}</option>`);
+}
+
+function createCode() {
+  const val = document.getElementById('newCodeVal').value.trim();
+  const label = document.getElementById('newCodeLabel').value.trim() || val;
+  const stage = document.getElementById('newCodeStage').value;
+  const grade = document.getElementById('newCodeGrade').value;
+  const subject = document.getElementById('newCodeSubject').value;
+  if (!val) { showNotif('❌ أدخل الكود', 'error'); return; }
+  const db = getDB();
+  if (db.codes.find(c => c.vl === val)) { showNotif('❌ الكود موجود مسبقاً', 'error'); return; }
+  db.codes.push({ id: 'code'+Date.now(), vl: val, on: true, lb: label, scStg: stage, scGr: grade, scSb: subject });
+  saveDB(db);
+  closeModal('createCodeModal');
+  renderCodesAdmin();
+  renderAdminStats();
+  showNotif('✅ تم إنشاء الكود');
+}
+
+function renderCodesAdmin() {
+  const db = getDB();
+  const container = document.getElementById('codesTable');
+  if (!db.codes.length) { container.innerHTML = '<p class="text-gray text-center">لا توجد أكواد</p>'; return; }
+  container.innerHTML = `<div style="overflow-x:auto"><table class="admin-table">
+    <thead><tr><th>الكود</th><th>التسمية</th><th>المرحلة</th><th>الصف</th><th>المادة</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+    <tbody>${db.codes.map(c => `
+      <tr>
+        <td><strong>${escHtml(c.vl)}</strong></td>
+        <td>${escHtml(c.lb)}</td>
+        <td>${c.scStg==='all'?'الكل':c.scStg}</td>
+        <td>${c.scGr==='all'?'الكل':c.scGr}</td>
+        <td>${c.scSb==='all'?'الكل':c.scSb}</td>
+        <td><span class="badge ${c.on?'badge-success':'badge-danger'}">${c.on?'مفعل':'موقوف'}</span></td>
+        <td>
+          <button class="btn btn-xs ${c.on?'btn-danger':'btn-success'}" onclick="toggleCode('${c.id}')">${c.on?'إيقاف':'تفعيل'}</button>
+          <button class="btn btn-xs btn-outline" onclick="deleteCode('${c.id}')">🗑️</button>
+          <button class="btn btn-xs btn-success" onclick="openSendWaCode('${c.vl}')">📲 واتساب</button>
+        </td>
+      </tr>`).join('')}
+    </tbody>
+  </table></div>`;
+}
+
+function toggleCode(id) {
+  const db = getDB();
+  const code = db.codes.find(c => c.id === id);
+  if (code) { code.on = !code.on; saveDB(db); renderCodesAdmin(); renderAdminStats(); }
+}
+
+function deleteCode(id) {
+  if (!confirm('حذف هذا الكود؟')) return;
+  const db = getDB();
+  db.codes = db.codes.filter(c => c.id !== id);
+  saveDB(db);
+  renderCodesAdmin();
+  renderAdminStats();
+  showNotif('🗑️ تم حذف الكود');
+}
+
+// FIX #12: Send codes to WhatsApp
+function openSendWa(studentUs) {
+  const db = getDB();
+  const codeSelect = document.getElementById('waCodeSelect');
+  codeSelect.innerHTML = db.codes.filter(c=>c.on).map(c=>`<option value="${c.vl}">${c.vl} — ${c.lb}</option>`).join('');
+  const studentList = document.getElementById('waStudentList');
+  studentList.innerHTML = db.accounts.filter(a=>a.role!=='admin'&&a.phone).map(s=>`
+    <label class="checkbox-item">
+      <input type="checkbox" value="${s.us}" ${s.us===studentUs?'checked':''} class="wa-student-cb">
+      ${escHtml(s.name||s.us)} (${s.phone})
+    </label>`).join('');
+  openModal('sendWaModal');
+}
+
+function openSendWaCode(codeVal) {
+  openSendWa('');
+  setTimeout(() => { document.getElementById('waCodeSelect').value = codeVal; }, 50);
+}
+
+function sendCodesToWa() {
+  const code = document.getElementById('waCodeSelect').value;
+  const selected = [...document.querySelectorAll('.wa-student-cb:checked')].map(c=>c.value);
+  if (!code || !selected.length) { showNotif('❌ اختر كوداً وطالباً واحداً على الأقل', 'error'); return; }
+  const db = getDB();
+  selected.forEach(us => {
+    const acc = db.accounts.find(a => a.us === us);
+    if (!acc || !acc.phone) return;
+    const msg = `مرحباً ${acc.name||acc.us}! 🎓\nكود فتح المحتوى على منصة Full Mark:\n*${code}*\nMore Than Just Success 💫`;
+    const phone = '2' + acc.phone; // add Egypt country code
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+  });
+  closeModal('sendWaModal');
+  showNotif(`✅ تم فتح واتساب لـ ${selected.length} طالب`);
+}
+
+function renderLog() {
+  const db = getDB();
+  const tbody = document.getElementById('logBody');
+  if (!db.loginLog.length) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:20px;color:var(--gray-500)">لا يوجد سجل</td></tr>'; return; }
+  tbody.innerHTML = db.loginLog.slice(0,50).map(l => `
+    <tr><td>${escHtml(l.name||l.us)} <small class="text-gray">(${l.us})</small></td><td>${l.date}</td><td>${l.time}</td></tr>`).join('');
+}
+
+// ============================================================
+// MODALS
+// ============================================================
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+// Close on backdrop click
+// Backdrop click to close modals - using event delegation on document
+document.addEventListener('click', function(e) {
+  if (e.target && e.target.classList && e.target.classList.contains('modal-overlay')) {
+    e.target.classList.remove('open');
+  }
+});
+
+// ============================================================
+// NOTIFICATIONS
+// ============================================================
+function showNotif(msg, type='') {
+  const el = document.getElementById('notif');
+  el.textContent = msg;
+  el.className = 'notif show' + (type?' '+type:'');
+  setTimeout(() => el.classList.remove('show'), 3500);
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function escHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('load', () => {
+  initSession();
+});
+</script>
+</body>
+</html>
